@@ -33,3 +33,19 @@ Download the files for 19 September 2018 to 16 October 2018:  <br />
 TERRA_MODIS.20180919.L3m.DAY.NSST.sst.4km.nc  <br />
 …  <br />
 TERRA_MODIS.20181016.L3m.DAY.NSST.sst.4km.nc  <br />
+
+Download the **sea surface salinity** data from https://www.seanoe.org/data/00607/71909/ <br />
+Scroll down and click the Weekly SMOS Arctic SSS v1.1 link to download a large .zip file, from which you should extract the files:
+
+SMOS-arctic-LOCEAN-SSS-2018-09-15-v1.1AT-7days.nc	<br />
+SMOS-arctic-LOCEAN-SSS-2018-09-21-v1.1AT-7days.nc	<br />
+SMOS-arctic-LOCEAN-SSS-2018-10-07-v1.1AT-7days.nc <br />
+SMOS-arctic-LOCEAN-SSS-2018-09-30-v1.1AT-7days.nc <br />
+
+Download the CryoSAT2 **Dynamic ocean topography** data from http://rads.tudelft.nl/rads/data/authentication.cgi <br />
+Navigate through three pages of options and make the following selections, organized by page:
+1. You will need to enter your email address to receive the data. Use the default settings under "Options" <br />
+1. Select the "sea level anomaly" variable <br />
+1. The date range of interest is covered by Cycles 109 & 110. Select all passes. Update the geographic range <br />
+
+
