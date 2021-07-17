@@ -54,5 +54,7 @@ You will need to enter your email address to receive the data. Navigate through 
 1. The date range of interest is covered by Cycles 109 & 110. Select all passes. Update the geographic range to 70°N to 90°N, -180°E to -130°E <br />
 
 You will then receive an email to download several hundred zipped .asc files. Unzip these files into the directory ~/meltwaterAdvection/data/DOT/raw/
+
+**Alternatively, the data are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
 ##
 
