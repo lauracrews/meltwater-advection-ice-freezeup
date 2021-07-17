@@ -1,5 +1,5 @@
 # Meltwater advection hastens autumn freeze up
-Code to reproduce analysis and figures of "Meltwater Advection Hastens Freeze Up" by Crews et al. (2021)
+Code to reproduce the analysis and figures in the paper "Meltwater advection hastens autumn freeze up" by Crews et al. (2021)
 
 # Dependencies
 
@@ -16,7 +16,7 @@ Code to reproduce analysis and figures of "Meltwater Advection Hastens Freeze Up
 # Downloading data
 Download **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway** data used in this study to the directory ~/meltwaterAdvection/data/ from the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135 
 ##
-Download **ERA5 hourly reanalysis** data to the directory ~/meltwaterAdvection/data/ from the [C3S climate data store](https://cds.climate.copernicus.eu/#!/home). Surface/single leves are available at https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+Download **ERA5 hourly reanalysis** data to the directory ~/meltwaterAdvection/data/ from the [C3S climate data store](https://cds.climate.copernicus.eu/#!/home). Surface/single levels are available at https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
 ##
