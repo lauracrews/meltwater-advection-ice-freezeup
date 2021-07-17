@@ -42,10 +42,12 @@ SMOS-arctic-LOCEAN-SSS-2018-09-21-v1.1AT-7days.nc	<br />
 SMOS-arctic-LOCEAN-SSS-2018-10-07-v1.1AT-7days.nc <br />
 SMOS-arctic-LOCEAN-SSS-2018-09-30-v1.1AT-7days.nc <br />
 
-Download the CryoSat-2 **Dynamic ocean topography** data from http://rads.tudelft.nl/rads/data/authentication.cgi <br />
-Navigate through three pages of options and make the following selections, organized by page:
-1. You will need to enter your email address to receive the data. Use the default settings under "Options" <br />
+Download the CryoSat-2 **Dynamic ocean topography** data from the Radar Altimeter Database System at http://rads.tudelft.nl/rads/data/authentication.cgi <br />
+You will need to enter your email address to receive the data. Navigate through three pages of options and make the following selections, organized by page:
+1. Use the default settings under "Options" <br />
 1. Select the "sea level anomaly" variable <br />
-1. The date range of interest is covered by Cycles 109 & 110. Select all passes. Update the geographic range <br />
+1. The date range of interest is covered by Cycles 109 & 110. Select all passes. Update the geographic range to 70N to 90N, -180E to -130E <br />
+
+You will then receive an email to download several hundred zipped .asc files. Unzip these files into the directory ~/meltwaterAdvection/data/DOT/raw/
 
 
