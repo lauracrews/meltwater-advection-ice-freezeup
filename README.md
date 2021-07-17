@@ -47,7 +47,7 @@ SMOS-arctic-LOCEAN-SSS-2018-09-21-v1.1AT-7days.nc	<br />
 SMOS-arctic-LOCEAN-SSS-2018-10-07-v1.1AT-7days.nc <br />
 SMOS-arctic-LOCEAN-SSS-2018-09-30-v1.1AT-7days.nc <br />
 ##
-Download the CryoSat-2 **dynamic ocean topography** data from the Radar Altimeter Database System at http://rads.tudelft.nl/rads/data/authentication.cgi <br />
+Download the CryoSat-2 **dynamic ocean topography (DOT)** data from the Radar Altimeter Database System at http://rads.tudelft.nl/rads/data/authentication.cgi <br />
 You will need to enter your email address to receive the data. Navigate through three pages of options and make the following selections, organized by page:
 1. Use the default settings under "Options" <br />
 1. Select the "sea level anomaly" variable <br />
@@ -55,6 +55,6 @@ You will need to enter your email address to receive the data. Navigate through 
 
 You will then receive an email to download several hundred zipped .asc files. Unzip these files into the directory ~/meltwaterAdvection/data/DOT/raw/
 
-**Alternatively, the data are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
+**Alternatively, the DOT data are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
 ##
 
