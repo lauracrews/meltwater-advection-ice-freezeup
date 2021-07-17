@@ -13,14 +13,19 @@ Code to reproduce analysis and figures of "Meltwater Advection Hastens Freeze Up
 * cmocean, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps <br />
 * ColorBrewer, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/45208-colorbrewer-attractive-and-distinctive-colormaps <br />
 
-# External data
-
-Download the **sea surface temperature** data from the Physical Oceanography Distributed Active Archive Center at NASA/JPL. You will need to make a free account. <br />
+# Downloading data
+Download **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway** data used in this study to the directory ~/meltwaterAdvection/data/ from the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135 
+##
+Download **ERA5 hourly reanalysis** data to the directory ~/meltwaterAdvection/data/ from the [C3S climate data store](https://cds.climate.copernicus.eu/#!/home). Surface/single leves are available at https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+##
+**Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
+##
+Download the MODIS-Terra **sea surface temperature** data from the Physical Oceanography Distributed Active Archive Center at NASA/JPL. You will need to make a free account. <br />
 
 For 8-day files go to: 
 https://podaac-tools.jpl.nasa.gov/drive/files/allData/modis/L3/terra/11um/v2019.0/4km/8day/2018 <br />
 
-Download the files: <br />
+Download the following files to the directory ~/meltwaterAdvection/data/ModisTerra/ <br />
 T20182572018264.L3m_8D_NSST_sst_4km.nc <br />
 T20182732018280.L3m_8D_NSST_sst_4km.nc <br />
 T20182652018272.L3m_8D_NSST_sst_4km.nc <br />
@@ -29,13 +34,13 @@ T20182812018288.L3m_8D_NSST_sst_4km.nc <br />
 For daily files go to:
 https://podaac-tools.jpl.nasa.gov/drive/files/allData/modis/L3/terra/11um/v2019.0/4km/daily/2018  <br />
 
-Download the files for 19 September 2018 to 16 October 2018:  <br />
+Download the files for 19 September 2018 to 16 October 2018 to the directory ~/meltwaterAdvection/data/ModisTerra/daily/  <br />
 TERRA_MODIS.20180919.L3m.DAY.NSST.sst.4km.nc  <br />
 …  <br />
 TERRA_MODIS.20181016.L3m.DAY.NSST.sst.4km.nc  <br />
 ##
-Download the **sea surface salinity** data from https://www.seanoe.org/data/00607/71909/ <br />
-Scroll down and click the Weekly SMOS Arctic SSS v1.1 link to download a large .zip file, from which you should extract the files:
+Download the SMOS **sea surface salinity** data from https://www.seanoe.org/data/00607/71909/ <br />
+Scroll down and click the Weekly SMOS Arctic SSS v1.1 link to download a large .zip file, from which you should extract the following files to the directory ~/meltwaterAdvection/data/SMOS_SSS/
 
 SMOS-arctic-LOCEAN-SSS-2018-09-15-v1.1AT-7days.nc	<br />
 SMOS-arctic-LOCEAN-SSS-2018-09-21-v1.1AT-7days.nc	<br />
