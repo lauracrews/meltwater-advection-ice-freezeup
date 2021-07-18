@@ -55,6 +55,6 @@ You will need to enter your email address to receive the data. Navigate through 
 
 You will then receive an email to download several hundred zipped .asc files. Unzip these files into the directory ~/meltwaterAdvection/data/DOT/raw/
 
-**Alternatively, the DOT data are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
+**Alternatively, the DOT data used in the study are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
 ##
 
