@@ -14,9 +14,7 @@ Code to reproduce the analysis and figures in the paper "Meltwater advection has
 * ColorBrewer, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/45208-colorbrewer-attractive-and-distinctive-colormaps <br />
 
 # Downloading data
-Download **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway** data used in this study to the directory ~/meltwaterAdvection/data/ from the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135 
-##
-Download **ERA5 hourly reanalysis** data to the directory ~/meltwaterAdvection/data/ from the [C3S climate data store](https://cds.climate.copernicus.eu/#!/home). Surface/single levels are available at https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+Download **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway** data used in this study to the directory ~/meltwaterAdvection/data/ from the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135. The **PWP model results** used to make the heat budget are also included in the archive and should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
 ##
