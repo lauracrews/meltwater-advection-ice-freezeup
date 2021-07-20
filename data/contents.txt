@@ -1,9 +1,10 @@
 
-Download the files following files to this directory from the UW ResearchWorks Archive at http://hdl.handle.net/1773/47135 
+Download the following to this directory from the UW ResearchWorks Archive at http://hdl.handle.net/1773/47135 
 
 -healyUnderway.csv
 -waveglider.nc
 -profiles.nc
+-subdirectory PWPresults
 
 Running run_meltwaterAdvection.m will create the following additional files in this directory:
 
