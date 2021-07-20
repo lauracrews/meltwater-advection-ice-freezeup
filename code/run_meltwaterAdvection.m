@@ -1,4 +1,8 @@
+%Reproduces the analysis and figures of "Meltwater advection hastens autumn
+%freeze up" by Crews et al. (2021). 
 
+%All scripts by Laura Crews (lcrews@uw.edu) unless otherwise noted 
+%July 2021.
 
 %First download the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
 %underway data used in this study to the directory ~/meltwaterAdvection/data/ 
@@ -60,9 +64,9 @@ disp('Making Figure 6 by running plot_profileTS.m')
 plot_profileTS
 
 %First download the dynamic ocean typography (DOT) data. 
-%Next extract the DOT data from .asc files to one large .mat file
+%Extract the DOT data from .asc files to one large .mat file
 cd([userpath, '/meltwaterAdvection/data/'])
-if exist('allDOT.mat', 'file') == 0
+if ~exist('allDOT.mat', 'file')
     extract_DOT
 end
 
@@ -75,5 +79,5 @@ plot_frontTracking
 disp('Making figures 8 and 9 by running plot_heatBudgetTransects.m')
 plot_heatBudgetTransects
 
-disp('Finishing Figure 10 by running plot_pwpResultsComparison.m')
+disp('Making Figure 10 by running plot_pwpResultsComparison.m')
 plot_pwpResultsComparison
