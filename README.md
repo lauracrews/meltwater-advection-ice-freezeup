@@ -17,7 +17,14 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 * cmocean, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps <br />
 * ColorBrewer, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/45208-colorbrewer-attractive-and-distinctive-colormaps <br />
 
-# Downloading data
+# Getting started
+Reproducing the analysis and figures requires the following steps
+1. Clone the repository to your computer
+2. Download the needed external data to the appropriate directories (instructions below)
+3. Within Matlab, add the ~/meltwaterAdvection/ directory and subdirectories to the path
+4. Enter `run_meltwaterAdvection` in the Matlab command line to reproduce all figures 
+
+## Download data
 From the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135, download 
 * **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data** to the directory ~/meltwaterAdvection/data/ 
 * **PWP model results** used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
@@ -65,8 +72,11 @@ You will then receive an email to download several hundred zipped .asc files.
 **Alternatively, the DOT data used in the study are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
 
 Unzip the files obtained by either method into the directory ~/meltwaterAdvection/data/DOT/raw/
-##
 
-# Run analysis and create figures
+## Run analysis and create figures
+
+The script `run_meltwaterAdvection` will create all the figures in the paper and save them as .png and Matlab .fig files into their own subdirectories within ~/meltwaterAdvection/figures/ 
+
+Switches determining if figures should be saved are provided within each plotting script (`plot_*.m`). If you do not want to save the figures, edit the plotting scripts directly and set `saveFigs = false`
 
 # Citation
