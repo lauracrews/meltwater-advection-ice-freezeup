@@ -4,18 +4,24 @@
 %All scripts by Laura Crews (lcrews@uw.edu) unless otherwise noted 
 %July 2021.
 
-%First download the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
-%underway data used in this study to the directory ~/meltwaterAdvection/data/ 
-%from the University of Washington ResearchWorks archive 
-%at http://hdl.handle.net/1773/47135
+%To get started, download the required data to the appropriate directories. 
+%Instructions are provided in the "download data" section of https://github.com/lauracrews/meltwaterAdvection
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Open the the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
+%underway data used in this study (download from http://hdl.handle.net/1773/47135)
 disp('Reading observational data into Matlab')
 extract_dataFromArchive
 
+%Download AMSR2 sea ice concentration from University of Bremen
 disp('Downloading and extracting AMSR2 sea ice concentration')
-batchAMSR2; %Download AMSR2 sea ice concentration from University of Bremen
-readAMSR2; %Create .mat file from AMSR2 data
+batchAMSR2; 
+
+%Create and load .mat file from AMSR2 data
+readAMSR2; 
 load AMSR2_2018.mat
 
+%Begin making figures
 if ~exist([userpath, '/meltwaterAdvection/figures/'], 'dir')
     mkdir([userpath, '/meltwaterAdvection/figures/'])
 end
@@ -24,7 +30,7 @@ end
 disp('Making Figure 1 by running plot_first_and_last_day_open.m')
 plot_first_and_last_day_open; 
 
-%First download the MODIS-Terra SST data from the Physical Oceanography 
+%You need to download the MODIS-Terra SST data from the Physical Oceanography 
 %Distributed Active Archive Center at NASA/JPL.
 disp('Making Figure 2 (top panels) by running plot_surfaceTemperature_byTime.m')
 plot_surfaceTemperature_byTime
@@ -42,7 +48,7 @@ end
 disp('Making Figure 3a by running plot_observations_dailyMODIS.m')
 plot_observations_dailyMODIS
  
-%First download the SMOS sea surface salinity data from SEANOE
+%You need to download the SMOS sea surface salinity data from SEANOE
 disp('Making Figure 3b by running plot_observations_SMOSsalinity.m')
 plot_observations_SMOSsalinity
 
@@ -63,7 +69,7 @@ end
 disp('Making Figure 6 by running plot_profileTS.m')
 plot_profileTS
 
-%First download the dynamic ocean typography (DOT) data. 
+%You need to download the dynamic ocean typography (DOT) data (available at https://github.com/lauracrews/meltwaterAdvection/blob/main/rawDOT.zip) 
 %Extract the DOT data from .asc files to one large .mat file
 cd([userpath, '/meltwaterAdvection/data/'])
 if ~exist('allDOT.mat', 'file')
@@ -76,6 +82,7 @@ plot_DOT_geostrophic
 disp('Finishing Figure 7 by running plot_frontTracking.m')
 plot_frontTracking
 
+%You need to download the PWP model results used to make the heat budget (download from http://hdl.handle.net/1773/47135)
 disp('Making figures 8 and 9 by running plot_heatBudgetTransects.m')
 plot_heatBudgetTransects
 
