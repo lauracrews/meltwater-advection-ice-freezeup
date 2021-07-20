@@ -1,4 +1,4 @@
-This directory should contain the following files
+This directory should contain the following 8-day MODIS-Terra nighttime sea surface temperature files:
 
 T20182572018264.L3m_8D_NSST_sst_4km.nc
 T20182732018280.L3m_8D_NSST_sst_4km.nc
