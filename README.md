@@ -1,7 +1,7 @@
 # Meltwater advection hastens autumn freeze up
 Code to reproduce the analysis and figures in the paper "Meltwater advection hastens autumn freeze up" by Crews et al. (2021)
 
-![ice_formation_melt](https://github.com/lauracrews/meltwaterAdvection/blob/main/ice_formation_melt.png)
+![ice_formation_melt](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/ice_formation_melt.png)
 ### Abstract 
 In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by heat loss from the upper ocean to the atmosphere and the onset of freeze up, in which first year sea ice begins to grow in open water areas. The timing of freeze up can be highly spatially variable, complicating efforts to provide accurate sea ice forecasting for marine operations. While melt season anomalies can be used to predict freeze up anomalies in some parts of the Arctic, this one-dimensional view merits further examination in light of recent work demonstrating the importance of three-dimensional flows in setting mixed layer properties in marginal ice zones. In this study we show that horizontal advection of sea ice meltwater hastens freeze up in areas distant from the ice edge. We use nearly 800 temperature and salinity profiles along with satellite imagery collected in the central Beaufort Sea in autumn 2018 to document the roughly 100 km advection of a cold and fresh surface meltwater layer over several weeks. This advected meltwater hastened freeze up by cooling and shoaling the mixed layer relative to adjacent areas unaffected by the meltwater. A mixed layer heat budget showed that advection was nearly as important as one-dimensional heat loss to the atmosphere for seasonally integrated mixed layer heat loss within the meltwater-affected area. 
 
@@ -18,7 +18,12 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 * ColorBrewer, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/45208-colorbrewer-attractive-and-distinctive-colormaps <br />
 
 # Downloading data
-Download **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway** data used in this study to the directory ~/meltwaterAdvection/data/ from the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135. The **PWP model results** used to make the heat budget are also included in the archive and should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/
+From the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135, download 
+* **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data** to the directory ~/meltwaterAdvection/data/ 
+* **PWP model results** used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
+
+Descriptions of these data are available in the [observational data readme](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/observationalDataReadme.md)
+
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
 ##
