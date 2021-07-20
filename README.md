@@ -8,8 +8,8 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 ### MATLAB and toolboxes
 * MATLAB (R2018b used to develop this code) <br />
 * MATLAB image processing toolbox function imgaussfilt.m <br />
-* Gibbs SeaWater (GSW) Oceanographic Toolbox Version 3.0.11, available at http://www.TEOS-10.org <br />
-* m_map toolbox, available at https://www.eoas.ubc.ca/~rich/map.html#download <br />
+* Gibbs SeaWater (GSW) Oceanographic Toolbox (version 3.0.11 used here), available at http://www.TEOS-10.org <br />
+* m_map Toolbox (version 1.4m used here), available at https://www.eoas.ubc.ca/~rich/map.html#download <br />
 
 ### Colormaps used in figures
 * cmocean, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps <br />
@@ -60,3 +60,6 @@ You will then receive an email to download several hundred zipped .asc files.
 Unzip the files obtained by either method into the directory ~/meltwaterAdvection/data/DOT/raw/
 ##
 
+# Run analysis and create figures
+
+# Citation
