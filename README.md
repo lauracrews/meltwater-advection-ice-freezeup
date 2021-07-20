@@ -18,7 +18,7 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 * ColorBrewer, available on the MATLAB file exchange at https://www.mathworks.com/matlabcentral/fileexchange/45208-colorbrewer-attractive-and-distinctive-colormaps <br />
 
 # Getting started
-Reproducing the analysis and figures requires the following steps
+Reproducing the analysis and figures requires the following steps:
 1. Clone the repository to your computer
 2. Download the needed external data to the appropriate directories (instructions below)
 3. Within Matlab, add the ~/meltwaterAdvection/ directory and subdirectories to the path
