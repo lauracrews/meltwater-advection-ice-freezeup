@@ -10,7 +10,7 @@ clearvars -except AMSR2 profiles wvdata metData ug vg lon_sub lat_sub
 saveFigs = true;
 saveDir = [userpath, '/meltwaterAdvection/figures/fig7/'];
 
-% Calculate geostrophic velocities 
+% Covert calculated geostrophic velocities to column vectors
 ug = ug(:); vg = vg(:);
 
 makeAnimation = false; 
