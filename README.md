@@ -79,6 +79,6 @@ The script `run_meltwaterAdvection` will create all the figures in the paper and
 
 Switches determining if figures should be saved are provided within each plotting script (`plot_*.m`). If you do not want to save the figures, edit the plotting scripts directly and set `saveFigs = false`
 
-Descriptions of each of the subroutines called by `run_meltwaterAdvection` are in the [code documentation]
+Descriptions of each of the subroutines called by `run_meltwaterAdvection` are in the [code documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/codeDocumentation.md)
 
 # Citation
