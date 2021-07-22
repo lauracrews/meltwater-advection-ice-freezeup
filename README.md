@@ -29,7 +29,7 @@ From the University of Washington ResearchWorks archive at http://hdl.handle.net
 * **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data** to the directory ~/meltwaterAdvection/data/ 
 * **PWP model results** used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
 
-Descriptions of these data are available in the [observational data readme](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/observationalDataReadme.md)
+Descriptions of these data are available in the [observational data documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/observationalDataReadme.md)
 
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
@@ -78,5 +78,7 @@ Unzip the files obtained by either method into the directory ~/meltwaterAdvectio
 The script `run_meltwaterAdvection` will create all the figures in the paper and save them as .png and Matlab .fig files into their own subdirectories within ~/meltwaterAdvection/figures/ 
 
 Switches determining if figures should be saved are provided within each plotting script (`plot_*.m`). If you do not want to save the figures, edit the plotting scripts directly and set `saveFigs = false`
+
+Descriptions of each of the subroutines called by `run_meltwaterAdvection` are in the [code documentation]
 
 # Citation
