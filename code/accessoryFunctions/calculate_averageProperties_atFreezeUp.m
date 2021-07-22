@@ -3,12 +3,14 @@
 %section of the paper
 
 %% Differentiate profiles inside and outside the meltwater, average heat content
-close all; clear
+close all; 
+clearvars -except AMSR2 profiles wvdata metData
+
 defineSODAconstants;
 integrationDepth = 40; %Integrate to a constant depth of 40 m
 
 %Load data structure of all profiles
-[profiles, goodProfsMask] = loadProfiles;
+% profiles = loadProfiles;
 
 %Geographic bounds for profiles on the southern Seaglider transect
 minlat = 73 + 25/60; maxlat = 74.33; minlon = -148; maxlon = -146;
@@ -32,8 +34,8 @@ inMeltwater = zeros(size(profiles.times));
 inMeltwater(surfaceSalinity < 26) = 1;
 
 %Identify the profiles in this geographic region in this time period
-meltwaterProfNums = find(goodProfsMask == 1 & inTimeMask == 1 & inRegionMask == 1 & inMeltwater == 1);
-noMeltwaterProfNums = find(goodProfsMask == 1 & inTimeMask == 1 & inRegionMask == 1 & inMeltwater == 0);
+meltwaterProfNums = find(profiles.qualFlag == 1 & inTimeMask == 1 & inRegionMask == 1 & inMeltwater == 1);
+noMeltwaterProfNums = find(profiles.qualFlag == 1 & inTimeMask == 1 & inRegionMask == 1 & inMeltwater == 0);
 
 %Calculate heat content in PWP model output at freeze up for profiles inside the meltwater
 meltwaterPWPupperHeatContent_freezeTime = nan .* ones(size(meltwaterProfNums));
