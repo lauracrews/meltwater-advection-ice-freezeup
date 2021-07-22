@@ -48,8 +48,7 @@ and time range. Also makes a map showing where the profiles were taken.
 
 #### Figure 9
 Also made with `plot_heatBudgetTransects.m` described above. The heat budget calculations are outlined in the flowchart shown below
-
-
+![](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/Heat%20Budget%20Methods.png)
 *This flowchart outlines the method for creating heat budgets for each Seaglider transect between the time of the first Seaglider transect and the modeled freeze up time* 
 
 #### Figure 10
