@@ -15,7 +15,7 @@ ug = ug(:); vg = vg(:);
 
 makeAnimation = false; 
 defineSODAconstants
-rhoWater = 1026; %Reference density of Seawatere kg/m^3
+rhoWater = 1026; %Reference density of seawater kg/m^3
 D_ek = 10; %Assumed Ekman depth
 
 %Make sure projection matches that of the figure on which the tracks will be plotted
