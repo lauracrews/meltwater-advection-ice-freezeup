@@ -8,25 +8,25 @@
 %Instructions are provided in the "download data" section of https://github.com/lauracrews/meltwaterAdvection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+rootPath = [userpath, '/meltwaterAdvection/'];
+
 %Open the the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
 %underway data used in this study (download from http://hdl.handle.net/1773/47135)
 disp('Reading observational data into Matlab')
 extract_dataFromArchive
 
-%Download AMSR2 sea ice concentration from University of Bremen
-disp('Downloading and extracting AMSR2 sea ice concentration')
-batchAMSR2; 
-
-%Create and load .mat file from AMSR2 data
-readAMSR2; 
+if ~exist([rootPath, 'data/AMSR2_2018.mat'], 'file')
+    disp('Downloading and extracting AMSR2 sea ice concentration')
+    batchAMSR2; %Download AMSR2 sea ice concentration from University of Bremen
+    readAMSR2; %Create and load .mat file from AMSR2 data
+end
 load AMSR2_2018.mat
 
 %Begin making figures
-if ~exist([userpath, '/meltwaterAdvection/figures/'], 'dir')
-    mkdir([userpath, '/meltwaterAdvection/figures/'])
+if ~exist([rootPath, 'figures/'], 'dir')
+    mkdir([rootPath, 'figures/'])
 end
 
-%Need to make ibcao.mat available to contour bathymetry
 disp('Making Figure 1 by running plot_first_and_last_day_open.m')
 plot_first_and_last_day_open; 
 
@@ -38,7 +38,7 @@ plot_surfaceTemperature_byTime
 disp('Making Figure 2 (bottom panels) by running plot_surfaceSalinity_byTime.m')
 plot_surfaceSalinity_byTime
 
-if ~exist([userpath, '/meltwaterAdvection/data/modisComparison.mat'], 'file')
+if ~exist([rootPath, 'data/modisComparison.mat'], 'file')
     disp('Matching observations to MODIS-SST data - this will take some time')
     match_observations_modis
 end
@@ -71,8 +71,7 @@ plot_profileTS
 
 %You need to download the dynamic ocean typography (DOT) data (available at https://github.com/lauracrews/meltwaterAdvection/blob/main/rawDOT.zip) 
 %Extract the DOT data from .asc files to one large .mat file
-cd([userpath, '/meltwaterAdvection/data/'])
-if ~exist('allDOT.mat', 'file')
+if ~exist([rootPath, 'data/allDOT.mat'], 'file')
     extract_DOT
 end
 
