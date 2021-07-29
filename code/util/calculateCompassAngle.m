@@ -1,5 +1,5 @@
 %Takes in zonal and meridional velocity vector components and calculates 
-%the compass angle of that velocity (i.e. north = 0°, east = 90°). 
+%the compass angle of that velocity (i.e. north = 0Â°, east = 90Â°). 
 %Used in plot_frontTracking.m
 function degN = calculateCompassAngle(u, v)
 
