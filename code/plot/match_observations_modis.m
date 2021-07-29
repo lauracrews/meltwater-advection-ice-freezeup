@@ -4,7 +4,7 @@
 %of days away from the observation day. 
 
 close all; clc
-clearvars -except AMSR2 profiles wvdata metData
+clearvars -except rootPath AMSR2 profiles wvdata metData
 plotPlatformComparison = false;
 
 %Empty data arrays to hold all of the observations
@@ -57,7 +57,7 @@ CTs = [CTs; CT]; %at 9 m (salinity required to calculate CT) so not used
 platform = [platform; 3 .* ones(size(wvdata.lons))];
 
 %Load daily SST files
-files_daily = dir([userpath, '/meltwaterAdvection/data/ModisTerra/daily/*DAY*.nc']);
+files_daily = dir([rootPath, 'data/ModisTerra/daily/*DAY*.nc']);
 files_daily  = {files_daily.name};
 if isempty(files_daily)
      disp(['MODIS-Terra sea surface temperature data not found. Download daily files for 19 Sept 2018 to 16 Oct 2018 from', ...
@@ -82,7 +82,6 @@ modisTime_nearObservations = nan .* ones(size(lons));
 makePlot = false; close all
 for i = 1:length(lons)
     disp(['Matching observation ', num2str(i), ' of ', num2str(length(lons)), ' to MODIS SST'])
-    tic
     
     %This is the geographic range around each point to search for 
     %MODIS data to average. Box is roughly 15 km
@@ -132,9 +131,9 @@ for i = 1:length(lons)
     %the average MODIS data near the observation
     modisSST_nearObservations(i) = modisMean;
     modisTime_nearObservations(i) = modisDays(modisInd);
-    toc    
+        
 end
 
 %This takes a little while for all of the observations - save to reload later for speed
-cd([userpath, '/meltwaterAdvection/data/'])
+cd([rootPath, 'data/'])
 save('modisComparison.mat', 'lons', 'lats', 'times', 'temps', 'CTs', 'platform', 'startTime', 'endTime', 'timeThreshold', 'modisSST_nearObservations', 'modisTime_nearObservations');
