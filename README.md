@@ -77,6 +77,8 @@ Unzip the files obtained by either method into the directory ~/meltwaterAdvectio
 
 The script `run_meltwaterAdvection.m` will create all the figures in the paper and save them as .png and Matlab .fig files into their own subdirectories within ~/meltwaterAdvection/figures/ 
 
+**Note:** Copies of the output figures are available in numbered subdirectories in the [docs](https://github.com/lauracrews/meltwaterAdvection/tree/main/docs) directory of this repository if you would like to preview the results. 
+
 Switches determining if figures should be saved are provided within each plotting script (`plot_*.m`). If you do not want to save the figures, edit the plotting scripts directly and set `saveFigs = false`
 
 Descriptions of each of the subroutines called by `run_meltwaterAdvection.m` are in the [code documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/codeDocumentation.md)
