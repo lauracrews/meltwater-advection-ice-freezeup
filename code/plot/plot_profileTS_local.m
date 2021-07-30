@@ -24,6 +24,7 @@ minlon = -150; maxlon = -143; minlat = 72; maxlat = 75.5;
 m_proj('lambert', 'lon', [minlon maxlon], 'lat', [minlat maxlat]);
 
 %Will add sea ice to map
+load AMSR2_2018.mat
 iceDay = datenum('Oct 4 2018');
 iceTitle = ['AMSR2 sea ice ' datestr(iceDay, 'mmm dd')];
 
@@ -84,25 +85,67 @@ ylabel(['Conservative temperature ', ' (', sprintf(char(176)), 'C)'], 'fontsize'
 set(gca, 'fontsize', 12)
 
 plotCount = 1;
-for group = 1:3 %Iterate through combinations of lat/lon and time bounds
+for group = [1:2, 8] %Iterate through combinations of lat/lon and time bounds
     switch group
-        case 1 %Before meltwater
+        case 1 %South, before meltwater
             minlon = -148; maxlon = -146; minlat = 73 + 25/60; maxlat = 74.35; 
             startTime = datenum('sept 22 2018'); endTime = datenum('oct 3 2018');
-            col = colors.blue;
-        case 2 %Meltwater present
+            col = blue;
+        case 2 %South, meltwater present
             minlon = -148; maxlon = -146; minlat = 73 + 25/60; maxlat = 74.35;
             startTime = datenum('oct 5 2018'); endTime = datenum('oct 11 2018');
-            col = colors.purple;
-        case 3 %Remnant ice area
+            col = purple;
+        case 3 %South, after meltwater
+            minlon = -148; maxlon = -146; minlat = 73 + 25/60; maxlat = 74.35;
+            startTime = datenum('oct 11 2018'); endTime = datenum('oct 15 2018'); 
+            col = ltblue;
+        case 4 %Mid latitudes (indludes eddy)
+            minlon = -147; maxlon = -145.5; minlat = 74.35; maxlat = 74.67;
+            startTime = datenum('sept 21 2018'); endTime = datenum('oct 15 2018'); %endTime = datenum('sept 27 2018');
+            col = orange;
+        case 5 %Mid latitudes
+            minlon = -147; maxlon = -145.5; minlat = 74.35; maxlat = 74.67;
+            startTime = datenum('sept 27 2018'); endTime = datenum('oct 6 2018');
+            col = orange;
+        case 6 %Northern end
+            minlon = -147; maxlon = -145; minlat = 74.67; maxlat = 75.1;
+            startTime = datenum('sept 22 2018'); endTime = datenum('oct 15 2018'); %endTime = datenum('sept 30 2018'); 
+            col = red;
+         case 7 %Northern end
+            minlon = -147; maxlon = -145; minlat = 74.67; maxlat = 75.1;
+            startTime = datenum('sept 30 2018'); endTime = datenum('oct 8 2018');
+            col = orange;
+        case 8 %Remnant ice area
             minlon = -149.5; maxlon = -147; minlat = 72.75; maxlat = 73.25;
             startTime = datenum('sept 26, 2018'); endTime = datenum('sept 26, 2018') + .95;
             col = 'k';
+        case 9
+            minlon = -147; maxlon = -145; minlat = 74.67; maxlat = 75.1;
+            startTime = datenum('oct 8 2018'); endTime = datenum('oct 15 2018'); %endTime = datenum('sept 30 2018'); 
+            col = red;
+        case 10
+            minlon = -147; maxlon = -145; minlat = 75.1; maxlat = 75.5;
+            startTime = datenum('oct 11 2018'); endTime = datenum('oct 12 2018'); %endTime = datenum('sept 30 2018'); 
+            col = blue;
     end
     
-    %Identify the profiles in this geographic region in this time period    
-    profNums = identifyProfileNumbers(profiles, minlon, minlat, maxlon, maxlat, startTime, endTime);
+    %Mask of profiles in the current geographic bounds
+    inRegionMask = zeros(size(profiles.times));    
+    inRegionMask(profiles.lats >= minlat & profiles.lats <= maxlat ...
+        & profiles.lons >= minlon & profiles.lons <= maxlon) = 1;
+
+    %Mask of profiles in the current time bounds
+    inTimeMask = zeros(size(profiles.times));
+    inTimeMask(profiles.times >= startTime & profiles.times < endTime) = 1;
      
+    %Identify the profiles in this geographic region in this time period
+    if group ~=3
+        profNums = find(profiles.qualFlag == 1 & inTimeMask == 1 & inRegionMask == 1); 
+    else
+        vehicleMask = strcmp(profiles.dataset, 'uCTD');
+        profNums = find(profiles.qualFlag == 1 & inTimeMask == 1 & inRegionMask == 1 & vehicleMask == 1); 
+    end
+    
     %Plot profiles on T-S plot
     figure(1);
     for i = 1:length(profNums)
@@ -117,7 +160,6 @@ for group = 1:3 %Iterate through combinations of lat/lon and time bounds
    
     plotCount = plotCount + 1;
 end
-
 %% Format and save plots
 figure(1)
 xlim([25, 33])

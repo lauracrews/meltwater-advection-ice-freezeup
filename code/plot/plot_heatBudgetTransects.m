@@ -7,7 +7,7 @@ clearvars -except rootPath AMSR2 profiles wvdata metData
 
 saveFigs = true;
 
-defineSODAconstants
+[moorings, colors] = defineSODAconstants;
 
 %Heat content integration parameters
 integrationDepth = 50; %Integrate to this depth [m] when calculating pycnocline heat content
@@ -36,10 +36,6 @@ inRegionMask(profiles.lats >= minlat & profiles.lats <= maxlat ...
 
 %%
 plotCount = 1;
-
-%Used to identify for export for the archive by write_dataForArchive.m
-allProfs = [];
-allTransects = [];
 
 % Iterate through the Seaglider transects
 for transect = 1:4
@@ -79,8 +75,6 @@ for transect = 1:4
     %Identify the profiles in this geographic region in this time period
     profNums = find(inTimeMask == 1 & inRegionMask == 1 & platformMask == 1 & profiles.qualFlag == 1); %inRegionMask was made outside of this for-loop
     
-    allProfs = [allProfs, profNums];
-    allTransects = [allTransects, transect .* ones(size(profNums))];
 %%  
     %Bin the profiles by latitude, return the bin number of each profile
     [~, ~, binNums] = histcounts(profiles.lats(profNums), edgeLats);
@@ -115,7 +109,7 @@ for transect = 1:4
             initPycHeatContent = upperHeatContent_obs - mlHeatContent_obs;           
 
             %Load PWP results associated with the current observed profile
-            [modelOutput, forc] = extract_pwpDataFromArchive(profNum);
+            [modelOutput, forc] = extract_pwpDataFromArchive(profNum, rootPath);
 
             %Iterate through the time steps in the model output for the
             %current observed profile. Match with the times we want to
@@ -210,7 +204,7 @@ for transect = 1:4
                
         %%
          %Load the full PWP model run for the current observation
-        [modelOutput, forc] = extract_pwpDataFromArchive(profNum);
+        [modelOutput, forc] = extract_pwpDataFromArchive(profNum, rootPath);
 
         % Cumulative heat flux to the atmosphere from ERA5 data used to force this PWP run
         [~, endInd] = min(abs(forc.time - profiles.pwpFreezeTime(profNum)));
@@ -347,7 +341,7 @@ for transect = 1:4
                 
                 %Load the full PWP model run for the observation from the
                 %first transect
-                [modelOutput, forc] = extract_pwpDataFromArchive(prevProfNums_curBin(i));                    
+                [modelOutput, forc] = extract_pwpDataFromArchive(prevProfNums_curBin(i), rootPath);                    
 
                 %Closest pwp time step to the single observation
                 [~, curTimeInd] = min(abs(modelOutput.time - meanTimes(binNum)));
@@ -438,7 +432,7 @@ for transect = 1:4
 
     %Observed heat content
     l(1) = bar(midLats, meanObservedMLheat, .5, 'facealpha', 0.5);
-    errorbar(midLats, meanObservedMLheat, stdObservedMLheat, 'LineStyle', 'none', 'LineWidth', 2, 'color', blue)
+    errorbar(midLats, meanObservedMLheat, stdObservedMLheat, 'LineStyle', 'none', 'LineWidth', 2, 'color', colors.blue)
     ylabel('ML heat content (MJ/m^2)', 'fontsize', 12)
     ylim([0, 180]); xlim([edgeLats(1) - 0.05, edgeLats(end) + 0.05])
     xlabel('Latitude', 'fontsize', 12)
@@ -448,8 +442,8 @@ for transect = 1:4
     
     % Plot of observed and modelled mixed layer temperature
     subplot(4, 5, transect*5 - 2); hold on
-    m(1) = scatter(midLats, meanObservedMLtemp, 40, blue, 'filled');
-    errorbar(midLats, meanObservedMLtemp, stdObservedMLtemp,'LineStyle', 'none', 'LineWidth', 1, 'color', blue)
+    m(1) = scatter(midLats, meanObservedMLtemp, 40, colors.blue, 'filled');
+    errorbar(midLats, meanObservedMLtemp, stdObservedMLtemp,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
     m(2) = scatter(midLats, meanPWPmlTemp_obsTime, 40, 'k', 'filled');
     errorbar(midLats, meanPWPmlTemp_obsTime, stdPWPmlTemp_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
     ylabel(['Mixed layer temperature (', sprintf(char(176)), 'C)'], 'fontsize', 12)
@@ -461,8 +455,8 @@ for transect = 1:4
     
     % Plot of observed and modelled mixed layer salinity
     subplot(4, 5, transect*5 - 1); hold on
-    scatter(midLats, meanObservedMLsalt, 40, blue, 'filled')
-    errorbar(midLats, meanObservedMLsalt, stdObservedMLsalt,'LineStyle', 'none', 'LineWidth', 1, 'color', blue)
+    scatter(midLats, meanObservedMLsalt, 40, colors.blue, 'filled')
+    errorbar(midLats, meanObservedMLsalt, stdObservedMLsalt,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
     scatter(midLats, meanPWPmlSalt_obsTime, 40, 'k', 'filled')
     errorbar(midLats, meanPWPmlSalt_obsTime, stdPWPmlSalt_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
     ylabel('Mixed layer salinity (g/kg)', 'fontsize', 12)
@@ -471,8 +465,8 @@ for transect = 1:4
 
     % Plot of observed and modelled mixed layer depth
     subplot(4, 5, transect*5); hold on
-    scatter(midLats, meanObservedMLdepth, 40, blue, 'filled')
-    errorbar(midLats, meanObservedMLdepth, stdObservedMLdepth,'LineStyle', 'none', 'LineWidth', 1, 'color', blue)
+    scatter(midLats, meanObservedMLdepth, 40, colors.blue, 'filled')
+    errorbar(midLats, meanObservedMLdepth, stdObservedMLdepth,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
     scatter(midLats, meanPWPdepth_obsTime, 40, 'k', 'filled')
     errorbar(midLats, meanPWPdepth_obsTime, stdPWPdepth_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
     ylabel('Mixed layer depth (m)', 'fontsize', 12)
@@ -496,7 +490,7 @@ for transect = 1:4
     totalHeatLoss = [meanFatm_initToFreeze; -meanEntrainment_initToFreeze; advection]';
         
     br = bar(midLats, totalHeatLoss);    
-    clrs = [blue; [0 0 0]; yellow];
+    clrs = [colors.blue; [0 0 0]; colors.yellow];
     set(br, {'facecolor'}, {clrs(1,:),clrs(2,:), clrs(3,:)}.')
     if transect > 1
         lgd = legend('Atmosphere', 'Pycnocline', 'Advection');
@@ -531,8 +525,7 @@ for figNum = 1:2
        if mod(splot, numCols) == 1 %Format maps
            cmocean('haline'); caxis(clim_salt) %Constant color axis everywhere
             m_grid('xtick', [-148:2:-144], 'fontsize', 12)   
-            m_scatter(moorings([1, 3:4], 2), moorings([1, 3:4], 1), 250, 'k', 'p', 'filled')
-        %     m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled')
+            m_scatter(moorings.all([1, 3:4], 2), moorings.all([1, 3:4], 1), 250, 'k', 'p', 'filled')
        else
             xlabel(['Latitude (', sprintf(char(176)), 'N)'], 'fontsize', 12)
             set(gca, 'XTick', edgeLats, 'XTickLabelRotation', 90)

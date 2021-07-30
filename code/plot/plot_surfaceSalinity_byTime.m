@@ -3,7 +3,7 @@
 
 close all; clearvars -except rootPath AMSR2 profiles wvdata metData
 
-saveFigs = false;
+saveFigs = true;
 saveDir = [rootPath, 'figures/fig2/'];
 saveName = 'SSS_fourTimePeriods';
 
@@ -21,7 +21,7 @@ saveName = 'SSS_fourTimePeriods';
 
 clim_salt = [25.5, 27]; %Color limits for plotting
 saltOutcrop = 26; %Salinity outcrop approximating front location
-defineSODAconstants;
+[moorings, ~] = defineSODAconstants;
 
 %Set up map projection
 minlon = -150; maxlon = -143; minlat = 72; maxlat = 75.5;
@@ -163,8 +163,8 @@ for splot = 1:4 %Iterate through the time periods
     set(ax1, 'pos', ps)
 
     %Add mooring locations to map
-    m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-%     m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled')
+    m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
+%     m_scatter(moorings.all(:, 2), moorings.all(:, 1), 200, 'w', 'p', 'filled')
 
     obsTitle = ['Observations ' datestr(startTime, 'mmm dd'), ' to ', datestr(endTime-1, 'mmm dd')];
     iceTitle = ['AMSR2 sea ice ' datestr(iceDay, 'mmm dd')];

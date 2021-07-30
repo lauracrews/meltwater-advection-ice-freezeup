@@ -17,11 +17,11 @@ plotAdditionalCrossings = false; %Switch to plot additional front crossings by H
 g = 9.81; %Gravity [m/sec^2]
 rho0 = 1026; %Reference density [kg/m^3]
 mld = 15; %Assumed level of no motion for calculating velocity from thermal wind [m] 
-defineSODAconstants; %Mooring locations, colors
+[moorings, colors] = defineSODAconstants; %Mooring locations, colors
 
 %Axis limits and colors for plotting
 clim_salt = [25.5, 26.5]; clim_temp = [-1.5, 1];
-shallowCol = 'k'; deepCol = 0.5 .* [1 1 1];
+shallowCol = 'k'; deepCol = 0.5 .* [1 1 1]; %Black and gray
 
 % Load and plot data from Wave Glider 153 as this vehicle has salinity at
 % 0.2 m as well as 9 m
@@ -164,9 +164,9 @@ ylim([1020.3, 1021.3])
 set(gca, 'YColor', 'k');
 
 yyaxis right %Additional axis to show the density difference between the upper and lower CTDs
-h(3) = plot(dists./1000, rho(2, :) - rho(1, :), 'color', red);
-set(gca, 'ycolor', red);
-% ylabel('\Delta\rho', 'color', red)
+h(3) = plot(dists./1000, rho(2, :) - rho(1, :), 'color', colors.red);
+set(gca, 'ycolor', colors.red);
+% ylabel('\Delta\rho', 'color', colors.red)
 ylim([0, 0.3])
 
 lgd = legend(h(1:3), 'At 0.25 m', 'At 9 m', '\Delta\rho');
@@ -280,8 +280,8 @@ hold on
 h3 = m_scatter(lons, lats, 60, salts, 'filled');
 caxis(clim_salt)
 cmocean('haline')
-m_scatter(moorings(2:3, 2), moorings(2:3, 1), 250, 'k', 'p', 'filled')
-m_scatter(moorings(2:3, 2), moorings(2:3, 1), 200, 'w', 'p', 'filled')
+m_scatter(moorings.all(2:3, 2), moorings.all(2:3, 1), 250, 'k', 'p', 'filled')
+m_scatter(moorings.all(2:3, 2), moorings.all(2:3, 1), 200, 'w', 'p', 'filled')
 m_grid
 % cb = colorbar;
 % ylabel(cb, ['SA [g/kg]'], 'fontsize', 14) 

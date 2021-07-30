@@ -9,12 +9,10 @@ saveFigs = true;
 saveDir = [rootPath, 'figures/fig10/'];
 saveName = 'northPWPprofiles';
 
-% profiles = loadProfiles;
-
 plotMLD = false;
 plotIntegrationDepth = false;
 
-defineSODAconstants;
+[moorings, colors] = defineSODAconstants;
 
 %Set up map projection for the entire SODA-A to SODA-B area
 minlat = 72.95; maxlat = 75.5; minlon = -150; maxlon =  -144;
@@ -28,9 +26,9 @@ ylimits_profiles = [0, 55];
 figure; set(gcf, 'pos', [31 169 1539  690], 'color', 'w');
 subplot(1, 4, 3:4); hold on %Map
 m_grid
+
 %Add mooring locations to map
-m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-% m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled')
+m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
 
 %%
 for group = 1:2
@@ -38,7 +36,7 @@ for group = 1:2
     iceDay = [];
     switch group       
          case 1
-            col = red;
+            col = colors.red;
             profNum = 531;
         case 2
             col = .5 .* [1 1  1];

@@ -9,12 +9,11 @@ saveName = ['section', num2str(transect)];
 
 % transect = 1; %Currently, transect is defined outside of this function, in run_meltwaterAdvection.m
 
-% profiles = loadProfiles;
-defineSODAconstants;
+[moorings, ~] = defineSODAconstants;
 
 mldThreshold = 0.25; %Density change threshold relative to surface for plotting mixed layer depth
 
-%Axis limitst for plotting
+%Axis limits for plotting
 climits_temp = [-1.5, 1]; %Color limits for temperature
 climits_salt = [25, 29];%34]; %color limits for salinity
 ylimits_profiles = [0, 50]; %Depth range for section plots
@@ -166,8 +165,8 @@ ylabel(cb2, [' AMSR2 sea ice concentration'], 'fontsize', 12)%
 set(ax2, 'pos', ps)
 set(ax1, 'pos', ps)
 
-m_scatter(moorings([1, 3:4], 2), moorings([1, 3:4], 1), 250, 'k', 'p', 'filled')
-m_scatter(moorings([1, 3:4], 2), moorings([1, 3:4], 1), 200, 'w', 'p', 'filled')
+m_scatter(moorings.all([1, 3:4], 2), moorings.all([1, 3:4], 1), 250, 'k', 'p', 'filled')
+m_scatter(moorings.all([1, 3:4], 2), moorings.all([1, 3:4], 1), 200, 'w', 'p', 'filled')
 
 %Save map figure
 if saveFigs  

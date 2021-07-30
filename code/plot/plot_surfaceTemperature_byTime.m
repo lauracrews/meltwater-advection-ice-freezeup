@@ -23,7 +23,7 @@ saveName = 'SST_fourTimePeriods';
 minlon = -150; maxlon = -143; minlat = 72; maxlat = 75.5;
 m_proj('lambert', 'lon', [minlon maxlon], 'lat', [minlat maxlat]);
 
-defineSODAconstants;
+[moorings, ~] = defineSODAconstants;
 
 figure; set(gcf, 'color', 'w', 'pos', [144 227 1449 728]) %for 1x4 subplots
 for splot = 1:4 %Iterate through the time periods
@@ -139,8 +139,8 @@ for splot = 1:4 %Iterate through the time periods
     end
     
     %Add mooring locations to map
-    m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-    if splot <= 2; m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled'); end
+    m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
+    if splot <= 2; m_scatter(moorings.all(:, 2), moorings.all(:, 1), 200, 'w', 'p', 'filled'); end
 
     m_gshhs_i('patch',0.6*[1 1 1]); %Draw coastline
 

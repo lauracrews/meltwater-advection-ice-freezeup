@@ -7,14 +7,14 @@
 close all; 
 clearvars -except rootPath AMSR2 profiles wvdata metData ug vg lon_sub lat_sub
 
-saveFigs = true;
+saveFigs = false;
 saveDir = [rootPath, 'figures/fig7/'];
 
 % Convert geostrophic velocities (calculated in plot_DOT_geostrophic.m) to column vectors 
 ug = ug(:); vg = vg(:);
 
 makeAnimation = false; 
-defineSODAconstants
+[~, colors] = defineSODAconstants;
 rhoWater = 1026; %Reference density of Seawatere kg/m^3
 D_ek = 10; %Assumed Ekman depth
 
@@ -288,18 +288,16 @@ u_ek = (1/gsw_f(mean(pts(2, :)))) * tau_airwater_y * (1/(rhoWater * D_ek));
 % Plot wind and Ekman drift vectors
 figure; set(gcf, 'color', 'w', 'pos', [48 92 1492 863])
 subplot(3, 1, 1); hold on
-pt1 = quiver(times, zeros(size(times)), [atmFluxes.u10]' ./ 10, [atmFluxes.v10]' ./ 10, 0, 'linewidth', 1, 'color', blue);
-% pt1 = quiver(times, zeros(length(times), 1), tau_airwater_x .* 10, tau_airwater_y .* 10, 0, 'linewidth', 1, 'color', blue);
+pt1 = quiver(times, zeros(size(times)), [atmFluxes.u10]' ./ 10, [atmFluxes.v10]' ./ 10, 0, 'linewidth', 1, 'color', colors.blue);
 set(pt1, 'autoscale', 'off'); axis equal 
-pt2 = quiver(datenum('Oct 1 2018'), -0.7, 10 ./ 10, 0 ./ 10, 0, 'linewidth', 1, 'color', blue);
+pt2 = quiver(datenum('Oct 1 2018'), -0.7, 10 ./ 10, 0 ./ 10, 0, 'linewidth', 1, 'color', colors.blue);
 set(pt2, 'autoscale', 'off'); axis equal
-text(datenum('Oct 1 2018'), -0.5, '10-m wind, 10 m/sec', 'fontsize', 12, 'color', blue);
-% pt3 = quiver(times, zeros(length(times), 1), u_ek .* 10, v_ek .* 10, 0, 'linewidth', 1, 'color', orange);
-pt3 = quiver(times, zeros(size(times)), u_ek .* 10, v_ek .* 10, 0, 'linewidth', 1, 'color', orange); %(1:2:end)
+text(datenum('Oct 1 2018'), -0.5, '10-m wind, 10 m/sec', 'fontsize', 12, 'color', colors.blue);
+pt3 = quiver(times, zeros(size(times)), u_ek .* 10, v_ek .* 10, 0, 'linewidth', 1, 'color', colors.orange); 
 set(pt3, 'autoscale', 'off'); axis equal 
-pt4 = quiver(datenum('Oct 4 2018'), -0.7, 1, 0, 0, 'linewidth', 1, 'color', orange);
+pt4 = quiver(datenum('Oct 4 2018'), -0.7, 1, 0, 0, 'linewidth', 1, 'color', colors.orange);
 set(pt2, 'autoscale', 'off'); axis equal 
-text(datenum('Oct 4 2018'), -0.5, 'Mean Ekman velocity, 10 cm/sec', 'fontsize', 12, 'color', orange);
+text(datenum('Oct 4 2018'), -0.5, 'Mean Ekman velocity, 10 cm/sec', 'fontsize', 12, 'color', colors.orange);
 
 xlim([min(times) - .5, max(times) + .5])
 ylim([-2, 2])

@@ -8,7 +8,7 @@ clearvars -except rootPath AMSR2 profiles wvdata metData
 load('ibcao.mat')
 
 dayThreshold = 3; %Number of days in a fow that that a cell must be ice covered or ice free
-defineSODAconstants; %Mooring locations
+[moorings, colors] = defineSODAconstants; %Mooring locations and standard colors
 % load('Beaufort_AMSR2_2018.mat') %Load AMSR2 data
 sz = size(AMSR2.lon);
 
@@ -125,8 +125,8 @@ for splot = 1:2
     m_line(linpts(:, 1), linpts(:, 2), 'color', 'm', 'linewidth', 2, 'linestyle', '-') 
     
     %Add mooring locations to map
-    m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-    if splot == 1; m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled'); end
+    m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
+    if splot == 1; m_scatter(moorings.all(:, 2), moorings.all(:, 1), 200, 'w', 'p', 'filled'); end
 end
 
 drawnow; pause(0.1)

@@ -10,7 +10,7 @@ saveName = 'DOT_geostrophic';
 
 %Data that had been extracted from individual .asc files by extract_DOT.m
 load('allDOT.mat')
-defineSODAconstants;
+[moorings, colors] = defineSODAconstants;
 
 %Geographic range in which to calculate geostrophic currents
 minlon = -152; maxlon = -141; minlat = 72; maxlat = 75.7;
@@ -153,8 +153,8 @@ for splot = 1:4
     subplot(2, 2, splot)
     hold on
     m_grid
-    m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-    m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled')
+    m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
+    m_scatter(moorings.all(:, 2), moorings.all(:, 1), 200, 'w', 'p', 'filled')
 end
 
 %% Make map with of DOT with ocean currents, ice conditions
@@ -215,9 +215,8 @@ set(ax1, 'pos', ps)
 
 %Format map, add mooring locations
 m_grid( 'fontsize', 12)
-m_scatter(moorings(:, 2), moorings(:, 1), 250, 'k', 'p', 'filled')
-m_scatter(moorings(:, 2), moorings(:, 1), 200, 'w', 'p', 'filled')
-% m_text(moorings(:, 2), moorings(:, 1), {'    SODA-A', '   SODA-B', '   NAV-SW', '   NAV-SE'}, 'fontsize', 14, 'color', 'w')
+m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
+m_scatter(moorings.all(:, 2), moorings.all(:, 1), 200, 'w', 'p', 'filled')
 
 %Save figures
 if saveFigs 

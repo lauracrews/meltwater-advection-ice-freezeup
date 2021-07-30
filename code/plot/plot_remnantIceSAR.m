@@ -7,7 +7,7 @@ close all
 saveFigs = true;
 saveDir = [rootPath, 'figures/fig4/'];
 
-defineSODAconstants;
+[~, colors] = defineSODAconstants;
 
 clim_salt = [25.5, 26.5];
 
@@ -131,7 +131,7 @@ ylabel(cb, ['Absolute salinity (g/kg)'], 'fontsize', 14)
 set(cb, 'location', 'eastoutside');
 m_text(-148.95, 73.15, titleText, 'fontsize', 12, 'color', 'w')
 m_text(-148.9, 72.6, 'Sea ice', 'fontsize', 14, 'fontweight', 'bold', 'color', [0.93,0.69,0.13])
-m_text(-147.1, 72.65, ['Open', sprintf('\n'), 'water'], 'fontsize', 14, 'fontweight', 'bold', 'color', [0.93,0.69,0.13])
+m_text(-147.1, 72.65, ['Open', sprintf('\n'), 'water'], 'fontsize', 14, 'fontweight', 'bold', 'color', colors.yellow)
 
 %Make the axes the same size
 set(ax1, 'pos', ps)
