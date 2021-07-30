@@ -19,7 +19,7 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 
 # Getting started
 Reproducing the analysis and figures requires the following steps:
-1. Clone the repository to your computer
+1. Download this repository to the first directory on the Matlab search path (this can be found by running `userpath`). <br /> **Note:** If you would like to store this repo elsewhere, edit the variable rootPath in the script run_meltwaterAdvection.m to reflect the location of this repo’s contents
 2. Download the needed external data to the appropriate directories (instructions below)
 3. Within Matlab, add the ~/meltwaterAdvection/ directory and subdirectories to the path
 4. Enter `run_meltwaterAdvection` in the Matlab command line to reproduce all figures 
