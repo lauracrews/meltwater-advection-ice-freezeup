@@ -15,14 +15,14 @@
 `plot_first_and_last_day_open.m` - Makes Figure 1, maps of melt out and freeze up date. Adapted from code from Luc Rainville. Requires the `AMSR2_2018.mat` data structure, which was created by running `batchAMSR2.m` and `readAMSR2.m`. Uses the function `conv2P.m` from Luc Rainville
 
 #### Figure 2
-`plot_surfaceTemperature_byTime.m` - Plot the surface ocean temperature measurements from Healy, Seagliders, uCTD divided by time periods
+`plot_surfaceTemperature_byTime.m` - Plot the surface ocean temperature measurements from *Healy*, Seagliders, uCTD divided by time periods
 
-`plot_surfaceSalinity_byTime.m` - Plot the surface salinity measurements from Healy, Seagliders, uCTD divided by time periods
+`plot_surfaceSalinity_byTime.m` - Plot the surface salinity measurements from *Healy*, Seagliders, uCTD divided by time periods
 
 #### Figure 3
-`plot_observations_dailyMODIS.m` - Compares in situ sea surface temperature to MODIS sea surface temperature averaged in a box surrounding the observation. Iterates through daily MODIS images to find the closest MODIS SST in time to each observation, up to a threshold number of days away from the observation day. Options to plot data from all platforms on one figure or to make separate panels for the Healy underway data, Seaglider and uCTD data, and Wave Glider data.
+`plot_observations_dailyMODIS.m` - Compares in situ sea surface temperature to MODIS sea surface temperature averaged in a box surrounding the observation. Iterates through daily MODIS images to find the closest MODIS SST in time to each observation, up to a threshold number of days away from the observation day. Options to plot data from all platforms on one figure or to make separate panels for the *Healy* underway data, Seaglider and uCTD data, and Wave Glider data.
 
-`plot_observations_SMOSsalinity.m` - Makes plot of SMOS sea surface salinity along with sea surface salinity from in situ observations. Iterates through weekly SMOS images and finds in situ observations taken at the time of those images. Options to plot data from all platforms on one figure or to make separate panels for Healy underway data, Seaglider and uCTD data, and Wave Glider data. 
+`plot_observations_SMOSsalinity.m` - Makes plot of SMOS sea surface salinity along with sea surface salinity from in situ observations. Iterates through weekly SMOS images and finds in situ observations taken at the time of those images. Options to plot data from all platforms on one figure or to make separate panels for *Healy* underway data, Seaglider and uCTD data, and Wave Glider data. 
 
 #### Figure 4
 `plot_remnantIceSAR.m` - Plots the sea surface salinity from Seaglider and Wave Glider in the remnant ice area overlaid on concurrent SAR imagery.
