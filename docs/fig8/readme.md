@@ -1,1 +1,2 @@
-Figure 8 in Crews et al. (2021). Annotations labelling columns and demonstrating advection were added PowerPoint
+![](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/fig8/observed_modeled_mixedLayerProperties.png)
+Figure 8 in Crews et al. (2021). Legend locations were manually updated in Matlab. Annotations labelling columns and demonstrating advection were added PowerPoint
