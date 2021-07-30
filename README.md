@@ -9,7 +9,7 @@ In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by hea
 
 ### MATLAB and toolboxes
 * MATLAB (R2018b used to develop this code) <br />
-* MATLAB image processing toolbox function imgaussfilt.m <br />
+* MATLAB image processing toolbox (the function imgaussfilt.m is used) <br />
 * Gibbs SeaWater (GSW) Oceanographic Toolbox (version 3.0.11 used here), available at http://www.TEOS-10.org <br />
 * m_map Toolbox (version 1.4m used here), available at https://www.eoas.ubc.ca/~rich/map.html#download <br />
 
