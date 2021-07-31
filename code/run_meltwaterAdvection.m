@@ -13,7 +13,7 @@ rootPath = [userpath, '/meltwaterAdvection/'];
 %Open the the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
 %underway data used in this study (download from http://hdl.handle.net/1773/47135)
 disp('Reading observational data into Matlab')
-extract_dataFromArchive
+[metData, wvdata, profiles] = extract_dataFromArchive;
 
 if ~exist([rootPath, 'data/AMSR2_2018.mat'], 'file')
     disp('Downloading and extracting AMSR2 sea ice concentration')
