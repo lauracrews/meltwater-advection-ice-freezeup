@@ -2,8 +2,10 @@
 %Modified from code from S.D.Brenner, 2020
 
 %% Clean workspace
-clear; clc; close all;
-saveDir = [userpath, '/meltwaterAdvection/data/AMSR2/'];
+clearvars -except rootPath profiles wvdata metData
+close all;
+saveDir = [rootPath, 'data/AMSR2/'];
+if ~exist(saveDir, 'dir'); mkdir(saveDir); end 
 months = {'jul', 'aug', 'sep', 'oct', 'nov'}; %specify months from which to download data
 
 %% Open FTP link
@@ -21,6 +23,7 @@ mget(ftpObj,'LongitudeLatitudeGrid-n3125-ChukchiBeaufort.hdf', saveDir);
 dataDir2018 = '~/amsr2/asi_daygrid_swath/n3125/2018/'; %Download 2018 data
 locDir = '/ChukchiBeaufort/';
 saveDir = [saveDir, 'AMSR2raw/'];
+if ~exist(saveDir, 'dir'); mkdir(saveDir); end 
 
 %%
 for n = 1:length(months)
