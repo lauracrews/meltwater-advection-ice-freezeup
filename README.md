@@ -29,7 +29,7 @@ From the University of Washington ResearchWorks archive at http://hdl.handle.net
 * **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data** to the directory ~/meltwaterAdvection/data/ 
 * **PWP model results** used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
 
-Descriptions of these data are available in the [observational data documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/observationalDataReadme.md)
+Descriptions of these data are available in the [observational data documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/dataDocumentation.md)
 
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
