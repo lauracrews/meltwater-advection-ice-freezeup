@@ -84,3 +84,7 @@ Switches determining if figures should be saved are provided within each plottin
 Descriptions of each of the subroutines called by `run_meltwaterAdvection.m` are in the [code documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/codeDocumentation.md)
 
 # Citation
+This paper is published as 
+
+Crews, L., Lee, C. M., Rainville, L., & Thomson, J. (2022). Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up. Journal of Geophysical Research: Oceans, 127, e2021JC017775. https://doi.org/10.1029/2021JC017775
+ 
