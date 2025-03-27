@@ -4,11 +4,11 @@ This file describes code used to process the observational data from the shipboa
 `loadWaveglider.m` - Iterates through all Wave Glider files and combines the desired datasets (ocean temperature and salinity) into one data structure. Can be updated to also return the Wave Glider meteorological data. 
 
 ## Seaglider and uCTD profiles
-`loadProfiles.m` -  Loads the data structure of all Seaglider and uCTD  profiles in the study. Fills missing surface data and eliminates profiles with density inversions
+`profilesInRegion_timeseries.m` - Makes a data structure of temperature and salinity profiles collected by all platforms (all Seagliders and uCTD) in a specified geographic region and date range. Calls calculateHeatContent to depth-integrate the heat in the temperature profiles. This is run once to identify all of the profiles used in the study, after which the data structure is saved and the relevant PWP model results are added later
+
+`loadProfiles.m` -  Loads the data structure of all Seaglider and uCTD profiles in the study. Fills missing surface data and eliminates profiles with density inversions
 
 `identifyProfileNumbers.m` - Function to identify Seaglider and uCTD profiles in specified geographic bounds and time period
-
-`profilesInRegion_timeseries.m` - Makes a data structure of temperature and salinity profiles collected by all platforms (all Seagliders and uCTD) in a specified geographic region and date range. Calls calculateHeatContent to depth-integrate the heat in the temperature profiles. This is run once to identify all of the profiles used in the study, after which the data structure is saved and the relevant PWP model results are added later
 
 ## Underway meteorological and near-surface temperature and salinity from USCGC Healy
 `load_HEALY1802_MET.m` - Luc Rainville’s script which implements San Nguyen’s script `SN_readShipMET.m` to extract desired data fields at one minute intervals from the raw Healy underway data which was provided to Laura Crews by Luc Rainville. The resulting .mat file is `met.mat` Extracted data fields are summarized in the table below and descriptions of all data fields are included in `SN_readShipMET.m.`
