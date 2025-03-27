@@ -1,5 +1,7 @@
 # Meltwater advection hastens autumn freeze up
-Code to reproduce the analysis and figures in the paper "Meltwater advection hastens autumn freeze up" by Crews et al. (2021)
+Code to reproduce the analysis and figures in the paper "Meltwater advection hastens autumn freeze up" by Crews et al. (2022)
+
+Crews, L., Lee, C. M., Rainville, L., & Thomson, J. (2022). Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up. Journal of Geophysical Research: Oceans, 127, e2021JC017775. https://doi.org/10.1029/2021JC017775
 
 ![ice_formation_melt](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/fig1/ice_formation_melt.png)
 ### Abstract 
@@ -82,9 +84,3 @@ The script `run_meltwaterAdvection.m` will create all the figures in the paper a
 Switches determining if figures should be saved are provided within each plotting script (`plot_*.m`). If you do not want to save the figures, edit the plotting scripts directly and set `saveFigs = false`
 
 Descriptions of each of the subroutines called by `run_meltwaterAdvection.m` are in the [code documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/codeDocumentation.md)
-
-# Citation
-This paper is published as 
-
-Crews, L., Lee, C. M., Rainville, L., & Thomson, J. (2022). Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up. Journal of Geophysical Research: Oceans, 127, e2021JC017775. https://doi.org/10.1029/2021JC017775
- 
