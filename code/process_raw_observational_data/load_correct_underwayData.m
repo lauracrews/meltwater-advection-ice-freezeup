@@ -1,7 +1,8 @@
-%Compares Healy underway temperature and salinity data to concurrent uCTD
-%data. Applies a linear fit correction to the underway salinity data and a constant
-%correction to the underway temperature data. 
-
+% Loads temperature and salinity data collected by the ship's seawater intake system while underway.
+% Compares Healy underway temperature and salinity data to concurrent uCTD
+% data. Applies a linear fit correction to the underway salinity data and a constant
+% correction to the underway temperature data. 
+%
 %Reference: Alory et al., 2015, "The French contribution to the voluntary
 %observing ships network of sea surface salinity", doi:10.1016/j.dsr.2015.08.005
 
@@ -77,6 +78,7 @@ function metData = load_correct_underwayData()
 
     %Eliminate a couple of outlier salinitiess
     notOut = find(abs(concurrentMetSAs - uctdSA) <= 1.5); %these are acceptable values
+    out = find(abs(concurrentMetSAs - uctdSA) > 1.5); %these are acceptable values
 
     %Linear fit of salinity differences over time
     mdlSalt = fitlm(elapsedTimes_uCTD(notOut), uctdSalt(notOut) - concurrentMetSalts(notOut));
@@ -114,11 +116,11 @@ function metData = load_correct_underwayData()
     metData.CTs_uncorrected = metCT(ind1:ind2); metData.CTs = metCT_corrected(ind1:ind2); 
     metData.salts_uncorrected = metSalt(ind1:ind2); metData.salts = metSalt_corrected(ind1:ind2);
     metData.SAs_uncorrected = metSA(ind1:ind2); metData.SAs = metSA_corrected(ind1:ind2); 
-    
+%%    
     if makePlots
         figure; set(gcf, 'color', 'w')
         subplot(2, 1, 1)
-        scatter(elapsedTimes_met, metData.SAs_uncorrected);
+        scatter(elapsedTimes_met(ind1:ind2), metData.SAs_uncorrected);
         hold on; grid on
         scatter(elapsedTimes_uCTD, uctdSA, 40, 'r', 'filled');
 %         xlim([min(uCTD.time(goodProfiles)) - .5, max(uCTD.time(goodProfiles)) + .5])
@@ -147,7 +149,7 @@ function metData = load_correct_underwayData()
         %Temperature data
         figure; set(gcf, 'color', 'w')
         subplot(2, 1, 1)
-        scatter(elapsedTimes_met, metData.CTs_uncorrected);
+        scatter(elapsedTimes_met(ind1:ind2), metData.CTs_uncorrected);
         hold on; grid on
         scatter(elapsedTimes_uCTD, uctdCT, 40, 'r', 'filled');
 %         xlim([min(elapsedTimes_uCTD) - .5, max(elapsedTimes_uCTD) + .5])
@@ -164,10 +166,10 @@ function metData = load_correct_underwayData()
         scatter(elapsedTimes_uCTD, uctdCT - concurrentMetCTs, 40, 'r', 'filled');
         xlim([min(elapsedTimes_uCTD) - .5, max(elapsedTimes_uCTD) + .5])
         hold on; grid on
-        h = plot(mdlCT); delete(h([1, 3:4]));
+        % h = plot(mdlCT); delete(h([1, 3:4]));
         set(h(2), 'color' ,'k', 'linewidth', 1)
         ylabel('uCTD CT - TSG CT', 'fontsize', 12)
-        lgd = legend('Temperature difference', ['Linear Fit y = ', num2str(round(mdlCT.Coefficients.Estimate(2), 3)), 'x + ', num2str(round(mdlCT.Coefficients.Estimate(1), 2))]);
+        % lgd = legend('Temperature difference', ['Linear Fit y = ', num2str(round(mdlCT.Coefficients.Estimate(2), 3)), 'x + ', num2str(round(mdlCT.Coefficients.Estimate(1), 2))]);
         set(lgd, 'fontsize', 12, 'location', 'southeast')
         title(''); %xlabel('');
 %         datetick('x', 'keeplimits')
@@ -177,12 +179,12 @@ function metData = load_correct_underwayData()
 
 
     if makePlots
-        figure
+        figure('color', 'w', 'pos', [95         397        1198         440])
         subplot(1, 2, 1)
         scatter(uctdCT, concurrentMetCTs, 30)%, elapsedTimes_uCTD)
-        caxis([min(uCTD.time), max(uCTD.time)])
-        cb = colorbar; datetick(cb, 'y', 'keeplimits');
-        ylabel(cb, 'Measurement time', 'fontsize', 12)
+        %caxis([min(uCTD.time), max(uCTD.time)])
+        %cb = colorbar; datetick(cb, 'y', 'keeplimits');
+        %ylabel(cb, 'Measurement time', 'fontsize', 12)
         hold on; grid on
         mdl = fitlm(uctdCT, concurrentMetCTs);
         h = plot(mdl); delete(h([1, 3:4]));
