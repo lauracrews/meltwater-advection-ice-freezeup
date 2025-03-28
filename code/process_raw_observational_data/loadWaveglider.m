@@ -33,5 +33,16 @@ function wvdata = loadWaveglider
     wvdata.depths = depths;
     wvdata.temps = temps;
     wvdata.salts = salts;
+
+    %Rename field to be consistent with the other data
+    wvdata = renameStructField(wvdata, 'depths', 'z');
+    
+    %Calculate conservative temperature, absolute salinity, potential density
+    [SA, ~, ~] = gsw_SA_Sstar_from_SP(wvdata.salts, sw_pres(wvdata.z, repmat(wvdata.lats, [1, 3])), wvdata.lons, wvdata.lats);
+    CT = gsw_CT_from_t(SA, wvdata.temps, sw_pres(wvdata.z,repmat(wvdata.lats, [1, 3])));
+    sigthes = gsw_rho(SA, CT, 0); %Reference sea pressure of 0 (the surface)
+    
+    wvdata.CT = CT; wvdata.SA = SA; wvdata.sigthes = sigthes;
+
     
 end
