@@ -8,6 +8,6 @@ Download the following to this directory from the UW ResearchWorks Archive at ht
 
 Running run_meltwaterAdvection.m will create the following additional files in this directory:
 
--allDOT.mat
+-allDOT.mat (copy provided for reference)
 -AMSR2_2018.mat
--modisComparison.mat
+-modisComparison.mat  (copy provided for reference)
