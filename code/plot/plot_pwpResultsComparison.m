@@ -3,9 +3,10 @@
 %periods. Uses a specified example profile fpr each region/time
 
 close all; 
-clearvars -except rootPath AMSR2 profiles wvdata metData
+clearvars -except rootPath AMSR2 profiles wvdata metData saveFigs
 
 saveFigs = true;
+
 saveDir = [rootPath, 'figures/fig10/'];
 saveName = 'northPWPprofiles';
 
@@ -21,17 +22,17 @@ m_proj('lambert', 'lon', [minlon maxlon], 'lat', [minlat maxlat]);
 %Axis limits for plotting
 xlimits_temp = [-1.7, .5];
 xlimits_salt = [25.5, 30];
-ylimits_profiles = [0, 55];
+ylimits_profiles = [0, 50];
 
-figure; set(gcf, 'pos', [31 169 1539  690], 'color', 'w');
-subplot(1, 4, 3:4); hold on %Map
+figure; set(gcf, 'pos', [31 169 1170 690], 'color', 'w');
+subplot(1, 3, 1); hold on %Map
 m_grid
 
 %Add mooring locations to map
 m_scatter(moorings.all(:, 2), moorings.all(:, 1), 250, 'k', 'p', 'filled')
 
 %%
-for group = 1:2
+for group = [2, 1]
     %%
     iceDay = [];
     switch group       
@@ -45,29 +46,32 @@ for group = 1:2
     end
           
 %%   Plot temperature profile 
-    subplot(1, 5, 1); hold on
-    a(1) = plot(profiles.CT(:, profNum), profiles.z, 'linewidth', 2, 'color', col, 'linestyle', '--');
+    subplot(1, 3, 2); hold on
+    a(1) = plot(profiles.CT(:, profNum), profiles.z, 'linewidth', 2, 'color', col, 'linestyle', ':');
     a(2) = plot(profiles.pwpFreezeCTprof(:, profNum), profiles.pwpz, 'linewidth', 1, 'color', col);
-    freezingPtProf = gsw_CT_freezing(profiles.pwpFreezeSAprof(:, profNum), gsw_p_from_z(-profiles.pwpz, profiles.lats(profNum))); 
-    fpp = plot(freezingPtProf, profiles.pwpz, 'linewidth', 1, 'linestyle', '--', 'color', 'k');
-    fpt = text(-1.6, 14, 'Freezing temperature', 'Rotation', 90, 'color', 'k', 'fontsize', 12);
+    freezingPtProf = gsw_CT_freezing(profiles.pwpFreezeSAprof(:, profNum), gsw_p_from_z(-profiles.pwpz, profiles.lats(profNum)));
+    
+    if group == 2
+    fpp = plot(freezingPtProf, profiles.pwpz, 'linewidth', 1, 'linestyle', '--', 'color', 'k'); a(3) = fpp;
+    end
+%     fpt = text(-1.6, 14, 'Freezing temperature', 'Rotation', 90, 'color', 'k', 'fontsize', 12);
     xlim(xlimits_temp); 
     xlabel(['Conservative temperature (', sprintf(char(176)), 'C)'], 'fontsize', 12, 'FontWeight', 'bold')
  
 %%   Plot salinity profile     
-    subplot(1, 5, 2); hold on
-    a1 = plot(profiles.SA(:, profNum), profiles.z, 'linewidth', 2, 'color', col, 'linestyle', '--');
+    subplot(1, 3, 3); hold on
+    a1 = plot(profiles.SA(:, profNum), profiles.z, 'linewidth', 2, 'color', col, 'linestyle', ':');
     a2b = plot(profiles.pwpFreezeSAprof(:, profNum), profiles.pwpz, 'linewidth', 1, 'color', col);
     xlim(xlimits_salt);
     xlabel(['Absolute salinity (g/kg)'], 'fontsize', 12, 'FontWeight', 'bold')
 
     %% Find the depth of various isopycnals and add horizonal lines at those depths
     if plotIntegrationDepth 
-        subplot(1, 5, 1)
+        subplot(1, 3, 2)
         d(2) = line(xlimits_temp, profiles.integrationDepths(profNum) .* [1 1],  'color', 'k', 'linestyle', ':');
         d(5) = text(xlimits_temp(2), profiles.integrationDepths(profNum), ['Integration', sprintf('\n'), 'depth'], 'color', 'k');
 
-        subplot(1, 5, 2)
+        subplot(1, 3, 3)
         d(8) = line(xlimits_salt, profiles.integrationDepths(profNum) .* [1 1],  'color', 'k', 'linestyle', ':');
     end   
     
@@ -79,14 +83,14 @@ for group = 1:2
         densProff = gsw_rho(profiles.pwpFreezeSAprof(:, profNum), profiles.pwpFreezeCTprof(:, profNum), 0);
         depthIndf = find(densProff - densProff(1) > densChange, 1);
 
-        subplot(1, 5, 1)
+        subplot(1, 3, 2)
         b(1) = line(xlimits_temp, profiles.z(depthInd0) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(2) = text(xlimits_temp(2), profiles.z(depthInd0), ['  \Delta \rho_0 = ', num2str(densChange)], 'color', col); 
 
         b(3) = line(xlimits_temp, profiles.pwpz(depthIndf) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(4) = text(xlimits_temp(2), profiles.pwpz(depthIndf), ['  \Delta \rho_f = ', num2str(densChange)], 'color', 'k'); 
 
-        subplot(1, 5, 2)
+        subplot(1, 3, 3)
         b(5) = line(xlimits_salt, profiles.z(depthInd0) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(6) = line(xlimits_salt, profiles.pwpz(depthIndf) .* [1 1], 'color', 'k', 'linestyle', ':'); 
 
@@ -98,28 +102,29 @@ for group = 1:2
         densProff = gsw_rho(profiles.pwpFreezeSAprof(:, profNum), profiles.pwpFreezeCTprof(:, profNum), 0);
         depthIndf = find(densProff - densProff(1) > densChange, 1);
 
-        subplot(1, 5, 1)
+        subplot(1, 3, 2)
         b(7) = line(xlimits_temp, profiles.z(depthInd0) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(8) = text(xlimits_temp(2), profiles.z(depthInd0), ['  \Delta \rho_0 = ', num2str(densChange)], 'color', col); 
 
         b(9) = line(xlimits_temp, profiles.pwpz(depthIndf) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(10) = text(xlimits_temp(2), profiles.pwpz(depthIndf), ['  \Delta \rho_f = ', num2str(densChange)], 'color', 'k'); 
 
-        subplot(1, 5, 2)
+        subplot(1, 3, 3)
         b(11) = line(xlimits_salt, profiles.z(depthInd0) .* [1 1], 'color', 'k', 'linestyle', ':'); 
         b(12) = line(xlimits_salt, profiles.pwpz(depthIndf) .* [1 1], 'color', 'k', 'linestyle', ':'); 
     end
     
     %Make legend now that we are finished adding to the T-S plot
-    lgda = legend(a(1:2), 'Initial observed profile', 'PWP profile at freeze up');
+    
+    lgda = legend(a(1:3), 'Initial observed profile', 'PWP profile at freeze up', 'Freezing temperature');
     set(lgda, 'fontsize', 12, 'location', 'south');
     
     % Add profile location to map
-    subplot(1, 4, 3:4) %(2, 5, 5)
+    subplot(1, 3, 1) %(2, 5, 5)
     m_scatter(profiles.lons(profNum), profiles.lats(profNum),  60, col, 'filled'); %Dot to mark the current location
 %         g(2) = m_scatter(profiles.lons(profNum), profiles.lats(profNum),  30, 'w', 'filled');  
-    m_text(profiles.lons(profNum)-3, profiles.lats(profNum)+.03, ['Initial profile: ', datestr(profiles.times(profNum), 'mmm dd hh:MM')], 'color', col, 'fontsize', 12, 'FontWeight', 'bold')
-    m_text(profiles.lons(profNum)-3, profiles.lats(profNum)-.03, ['Freeze up: ', datestr(profiles.pwpFreezeTime(profNum), 'mmm dd hh:MM')], 'color', col, 'fontsize', 12, 'FontWeight', 'bold')
+    m_text(profiles.lons(profNum)-3.75, profiles.lats(profNum)+.08, ['Initial profile: ', datestr(profiles.times(profNum), 'dd mmm hh:MM')], 'color', col, 'fontsize', 11, 'FontWeight', 'bold')
+    m_text(profiles.lons(profNum)-3.75, profiles.lats(profNum)-.03, ['Freeze up: ', datestr(profiles.pwpFreezeTime(profNum), 'dd mmm hh:MM')], 'color', col, 'fontsize', 11, 'FontWeight', 'bold')
     
     %Add ice to the map, if a day for ice wasa defined at the start of the loop
     if ~isempty(iceDay)
@@ -129,17 +134,17 @@ for group = 1:2
         m_pcolor(AMSR2.lon, AMSR2.lat, curIce);
         cmocean('ice')
         cb = colorbar; set(cb, 'fontsize', 12, 'location', 'southoutside')
-        ylabel(cb, ['AMSR2 sea ice concentration', sprintf('\n'), ' on ', datestr(iceDay, 'mmm dd')], 'fontsize', 12)%  
+        ylabel(cb, ['AMSR2 sea ice concentration', sprintf('\n'), ' on ', datestr(iceDay, 'dd mmm')], 'fontsize', 12)%  
     end
 
 end
-  
+  %%
 %Format the temperature and salinity profiles
-for splot = 1:2
-    subplot(1, 5, splot)
-    grid on
+for splot = 2:3
+    subplot(1, 3, splot)
+    grid on; box on
     ylim(ylimits_profiles)
-    ylabel('Depth (m)', 'fontsize', 12, 'FontWeight', 'bold')
+    if splot == 2; ylabel('Depth (m)', 'fontsize', 12, 'FontWeight', 'bold'); end
     set(gca, 'ydir', 'reverse', 'fontsize', 12)
 end
     
@@ -148,5 +153,7 @@ if saveFigs
     if ~exist(saveDir, 'dir'); mkdir(saveDir); end
     print([saveDir, saveName],'-dpng')
     saveas(gcf, [saveDir, saveName, '.fig'])
+    print([saveDir, saveName],'-deps')
+
 end
 

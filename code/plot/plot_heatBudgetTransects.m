@@ -3,9 +3,10 @@
 %properties. Calculates mixed layer heat budget for each transect. 
 
 close all; 
-clearvars -except rootPath AMSR2 profiles wvdata metData
+clearvars -except rootPath AMSR2 profiles wvdata metData saveFigs
+saveFigs = false;
 
-saveFigs = true;
+fntsz = 14; %font size for entire figure. Nice to be able to update here - want big font for paper but smaller is better for presentations
 
 [moorings, colors] = defineSODAconstants;
 
@@ -45,18 +46,19 @@ for transect = 1:4
     switch transect
         case 1 %First Seaglider transect           
             startTime = datenum('sept 26 2018') + .5;
-            endTime = datenum('sept 30 2018');
+            endTime = datenum('sept 30 2018')-0.001; %Because this really means sampling until midnight on Sept 29/Sept 30  
+            
         case 2 %Second Seaglider transect
-            startTime = datenum('sept 30 2018');
-            endTime = datenum('oct 6 2018');
+            startTime = datenum('sept 30 2018'); %Start sampling at midnight on Sept 29/Sept 30
+            endTime = datenum('oct 6 2018')-0.001; 
         case 3 %Third Seaglider transect
             startTime = datenum('oct 6 2018');
-            endTime = datenum('oct 11 2018')+ .2;
+            endTime = datenum('oct 11 2018')-0.001;%+ .2;
         case 4 %Fourth Seaglider transect
-            startTime = datenum('oct 11 2018')+.2;
+            startTime = datenum('oct 11 2018');%+.2;
             endTime = datenum('oct 15 2018'); 
         case 5 %Western uCTD transect
-            startTime = datenum('oct 11 2018')+.2;
+            startTime = datenum('oct 11 2018');%+.2;
             endTime = datenum('oct 15 2018'); 
     end
     
@@ -75,6 +77,9 @@ for transect = 1:4
     %Identify the profiles in this geographic region in this time period
     profNums = find(inTimeMask == 1 & inRegionMask == 1 & platformMask == 1 & profiles.qualFlag == 1); %inRegionMask was made outside of this for-loop
     
+    %Save the profile numbers of these proffiles
+    matName = ['heatbuget_transect', num2str(transect), '_profileNumbers.mat'];
+    save([rootPath, 'data/heat_budget_transects/', matName], 'profNums')
 %%  
     %Bin the profiles by latitude, return the bin number of each profile
     [~, ~, binNums] = histcounts(profiles.lats(profNums), edgeLats);
@@ -406,7 +411,7 @@ for transect = 1:4
     figure(1); set(gcf, 'pos', [103 100 1519 827], 'color', 'w')
     
     %Map of 0-5 m salinity at profile locations
-    for figNum = 1:2
+    for figNum = 3
         figure(figNum)
         switch figNum
             case 1
@@ -418,75 +423,93 @@ for transect = 1:4
         hold on
         
         %Do title now since it depends on the profiles numbers of the current transect
-        title(['Observations ' datestr(min(profiles.times(profNums)), 'mmm dd'), ' to ', datestr(max(profiles.times(profNums)), 'mmm dd')], 'fontsize',12) 
+        title(['Observations ' datestr(min(profiles.times(profNums)), 'mmm dd'), ' to ', datestr(max(profiles.times(profNums)), 'mmm dd')], 'fontsize', fntsz) 
 
     end
     
     figure(1)
     %Plot heat contents
-    subplot(4, 5, transect*5 - 3); hold on
+    subplot(4, 4, transect*4 - 3); hold on
     
-    %Concurrent PWP predicted heat content
-    l(2) = bar(midLats, meanPWPheat_obsTime, 'FaceColor', 'none', 'LineWidth', 1);
-    errorbar(midLats, meanPWPheat_obsTime, stdPWPheat_obsTime, 'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
+    scatter(midLats, meanObservedMLsalt, 40, colors.blue, 'filled')
+    errorbar(midLats, meanObservedMLsalt, stdObservedMLsalt,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
+    scatter(midLats, meanPWPmlSalt_obsTime, 40, 'k', 'filled')
+    errorbar(midLats, meanPWPmlSalt_obsTime, stdPWPmlSalt_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')    
+    if transect == 1; title('Absolute salinity (g/kg)', 'fontsize', fntsz); end
+    ylim([25.3, 27.2])
+    set(gca, 'YTick', [25.5:.5:27])
+%     disp(['Transect ', num2str(transect), ' observed mixed layer temperature = ', num2str(nanmean(observedMLsalt))])
 
-    %Observed heat content
-    l(1) = bar(midLats, meanObservedMLheat, .5, 'facealpha', 0.5);
-    errorbar(midLats, meanObservedMLheat, stdObservedMLheat, 'LineStyle', 'none', 'LineWidth', 2, 'color', colors.blue)
-    ylabel('ML heat content (MJ/m^2)', 'fontsize', 12)
-    ylim([0, 180]); xlim([edgeLats(1) - 0.05, edgeLats(end) + 0.05])
-    xlabel('Latitude', 'fontsize', 12)
          
-    lgd = legend(l(1:2), 'Observed', '1D prediction');
-    set(lgd, 'fontsize', 12, 'location', 'north')    
+%     ylabel(['Observations', newline,  datestr(min(profiles.times(profNums)), 'mmm dd'), ' to ', datestr(max(profiles.times(profNums)), 'mmm dd')], 'fontsize',fntsz, 'fontweight', 'bold') 
+    ylabel(['Transect ', num2str(transect), newline, datestr(min(profiles.times(profNums)), 'dd mmm'), ' to ', datestr(max(profiles.times(profNums)), 'dd mmm')], 'fontsize', fntsz, 'fontweight', 'bold')
+    
+%     lgd = legend(l(1:2), 'Observed', '1D prediction');
+%     set(lgd, 'fontsize', fntsz, 'location', 'north')    
     
     % Plot of observed and modelled mixed layer temperature
-    subplot(4, 5, transect*5 - 2); hold on
+    subplot(4, 4, transect*4 - 2); hold on
     m(1) = scatter(midLats, meanObservedMLtemp, 40, colors.blue, 'filled');
     errorbar(midLats, meanObservedMLtemp, stdObservedMLtemp,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
     m(2) = scatter(midLats, meanPWPmlTemp_obsTime, 40, 'k', 'filled');
     errorbar(midLats, meanPWPmlTemp_obsTime, stdPWPmlTemp_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
-    ylabel(['Mixed layer temperature (', sprintf(char(176)), 'C)'], 'fontsize', 12)
-    ylim([-1.5, 0])
+    if transect == 1; title(['Conservative temperature (', sprintf(char(176)), 'C)'], 'fontsize', fntsz); end
+    ylim([-1.7, 0.1])
+    set(gca, 'YTick', [-1.6:.4:0])
     lgd = legend(m(1:2), 'Observed', '1D Prediction');
-    set(lgd, 'fontsize', 12, 'location', 'north') 
+    set(lgd, 'fontsize', fntsz, 'location', 'north') 
 %     disp(['Transect ', num2str(transect), ' observed mixed layer temperature = ', num2str(nanmean(observedMLtemp))])
 %     disp(['Transect ', num2str(transect), ' modeled-observed mixed layer temperature = ', num2str(nanmean(meanPWPmlTemp_obsTime-meanObservedMLtemp))])
     
     % Plot of observed and modelled mixed layer salinity
-    subplot(4, 5, transect*5 - 1); hold on
-    scatter(midLats, meanObservedMLsalt, 40, colors.blue, 'filled')
-    errorbar(midLats, meanObservedMLsalt, stdObservedMLsalt,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
-    scatter(midLats, meanPWPmlSalt_obsTime, 40, 'k', 'filled')
-    errorbar(midLats, meanPWPmlSalt_obsTime, stdPWPmlSalt_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
-    ylabel('Mixed layer salinity (g/kg)', 'fontsize', 12)
-    ylim([25, 26.8])
-%     disp(['Transect ', num2str(transect), ' observed mixed layer temperature = ', num2str(nanmean(observedMLsalt))])
-
-    % Plot of observed and modelled mixed layer depth
-    subplot(4, 5, transect*5); hold on
+    subplot(4, 4, transect*4 - 1); hold on
     scatter(midLats, meanObservedMLdepth, 40, colors.blue, 'filled')
     errorbar(midLats, meanObservedMLdepth, stdObservedMLdepth,'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
     scatter(midLats, meanPWPdepth_obsTime, 40, 'k', 'filled')
     errorbar(midLats, meanPWPdepth_obsTime, stdPWPdepth_obsTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
-    ylabel('Mixed layer depth (m)', 'fontsize', 12)
-    ylim([5, 35])
+    if transect == 1; title('Depth (m)', 'fontsize', fntsz); end
+    ylim([6, 38]); set(gca, 'YTick', [10:5:35])
 %     disp(['Transect ', num2str(transect), ' modeled mixed layer depth = ', num2str(nanmean(meanPWPdepth_obsTime))])
 %     disp(['Transect ', num2str(transect), ' observed mixed layer depth = ', num2str(nanmean(observedMLdepth))])
 %     disp(['Transect ', num2str(transect), ' modeled-observed mixed layer depth = ', num2str(nanmean(meanPWPdepth_obsTime-meanObservedMLdepth))])
 
+
+    % Plot of observed and modelled mixed layer depth
+    subplot(4, 4, transect*4); hold on
+
+%Concurrent PWP predicted heat content
+%     l(2) = bar(midLats, meanPWPheat_obsTime, 'FaceColor', 'none', 'LineWidth', 1);
+    l(2) = scatter(midLats, meanPWPheat_obsTime, 40, 'k', 'filled');
+    errorbar(midLats, meanPWPheat_obsTime, stdPWPheat_obsTime, 'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
+
+    %Observed heat content
+%     l(1) = bar(midLats, meanObservedMLheat, .5, 'facealpha', 0.5);
+    l(1) = scatter(midLats, meanObservedMLheat, 40, colors.blue, 'filled');
+    errorbar(midLats, meanObservedMLheat, stdObservedMLheat, 'LineStyle', 'none', 'LineWidth', 1, 'color', colors.blue)
+    if transect == 1; title('Heat content (MJ/m^2)', 'fontsize', fntsz); end
+    ylim([-10, 180]); xlim([edgeLats(1) - 0.05, edgeLats(end) + 0.05])
+    ytick([0:40:160])
+    xlabel('Latitude', 'fontsize', fntsz)
+    
+    sgtitle('Mixed layer properties', 'fontsize', fntsz + 2, 'fontweight', 'bold')
+    
     figure(2);
     
+    if transect < 4
+        
     %Plot of modelled freeze up times
-    subplot(4, 3, transect*3-1); hold on
+    subplot(3, 2, transect*2-1); hold on
     scatter(midLats, meanFreezeUpTime, 40, 'k', 'filled')    
     errorbar(midLats, meanFreezeUpTime, stdFreezeUpTime,'LineStyle', 'none', 'LineWidth', 1, 'color', 'k')
     ylim([datenum('oct 4, 2018'), datenum('oct 29, 2018')])
-    ylabel('Modeled freeze up time', 'fontsize', 12)
-    datetick('y',  'mmm-dd', 'keeplimits', 'keepticks')
     
+    if transect== 1; title('Modeled freeze up time', 'fontsize', fntsz); end
+    set(gca, 'ytick', [datenum('oct 7, 2018'):7:datenum('oct 28, 2018')])
+    datetick('y',  'mmm-dd', 'keeplimits', 'keepticks')
+    ylabel(['Transect ', num2str(transect), newline, datestr(min(profiles.times(profNums)), 'dd mmm'), ' to ', datestr(max(profiles.times(profNums)), 'dd mmm')], 'fontsize', fntsz, 'fontweight', 'bold')
+
     %Plot of heat budget components
-    subplot(4, 3, transect*3);
+    subplot(3, 2, transect*2);
     totalHeatLoss = [meanFatm_initToFreeze; -meanEntrainment_initToFreeze; advection]';
         
     br = bar(midLats, totalHeatLoss);    
@@ -494,44 +517,56 @@ for transect = 1:4
     set(br, {'facecolor'}, {clrs(1,:),clrs(2,:), clrs(3,:)}.')
     if transect > 1
         lgd = legend('Atmosphere', 'Pycnocline', 'Advection');
-        set(lgd,  'fontsize', 12)
+        set(lgd,  'fontsize', fntsz)
     end
-    ylabel('Heat out of mixed layer (MJ/m^2)', 'fontsize', 12)
-    ylim([-50, 150])
+    if transect == 1; title('Heat out of mixed layer (MJ/m^2)', 'fontsize', fntsz); end
+    ylim([-50, 170])
+    set(gca, 'ytick', [-40:40:160])
+    
+    end
         
     plotCount=plotCount+1;
 
 end
 
 %% Format and save figures
+
+alphabet = ('a':'z').';
+chars = num2cell(alphabet);
+chars = chars.';
+
 for figNum = 1:2 
     switch figNum
         case 1 %Figure showing mixed layer properties
-            numCols = 5;
+            numCols = 4;
+            numRows = 4;
             ps = [103 82 1310 873];
             saveDir = [rootPath, 'figures/fig8/'];
-            saveName = 'observed_modeled_mixedLayerProperties';
+            saveName = 'observed_modeled_mixedLayerProperties_v2';
         case 2 %Figure showing modeled freeze up date and heat budget components
-            numCols = 3;
+            numCols = 2;
+            numRows = 3;
             ps = [445 82 800 871];
             saveDir = [rootPath, 'figures/fig9/'];
-            saveName = 'mixedLayerHeatBudgets';
+            saveName = 'mixedLayerHeatBudgets_v2';
     end
     figure(figNum)
     set(gcf, 'color', 'w', 'pos', ps)
 
-    for splot = 1:(4*numCols)
-       subplot(4, numCols, splot); 
-       if mod(splot, numCols) == 1 %Format maps
-           cmocean('haline'); caxis(clim_salt) %Constant color axis everywhere
-            m_grid('xtick', [-148:2:-144], 'fontsize', 12)   
-            m_scatter(moorings.all([1, 3:4], 2), moorings.all([1, 3:4], 1), 250, 'k', 'p', 'filled')
-       else
-            xlabel(['Latitude (', sprintf(char(176)), 'N)'], 'fontsize', 12)
-            set(gca, 'XTick', edgeLats, 'XTickLabelRotation', 90)
-            xlim([edgeLats(1) - 0.05, edgeLats(end) + 0.05])
-            grid on; box on
-       end
+    for splot = 1:(numRows*numCols)
+        subplot(numRows, numCols, splot); 
+        xlabel(['Latitude (', sprintf(char(176)), 'N)'], 'fontsize', fntsz); 
+        set(gca, 'XTick', edgeLats, 'XTickLabelRotation', 90, 'fontsize', fntsz)
+        xlim([edgeLats(1) - 0.05, edgeLats(end) + 0.05])
+        grid on; box on
+        text(0.025,0.95,chars{splot},'Units','normalized','FontSize',fntsz+2, 'fontweight', 'bold')
+   end
+    
+    
+    if figNum == 1
+        packfig(4, 4, 'row')
+    else
+        packfig(3, 2, 'row')
     end
     
     if saveFigs 

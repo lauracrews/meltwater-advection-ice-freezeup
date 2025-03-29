@@ -5,7 +5,6 @@
 %Seaglider and uCTD data, and Wave Glider data. 
 
 close all
-clearvars -except rootPath AMSR2 profiles wvdata metData
 plotPlatformComparison = false;
 
 load('modisComparison.mat') %This was created using match_observations_modis.m
@@ -37,25 +36,9 @@ close all
 pedgs = -1.75:0.1:1.25; %Bin edges for creating the 2-d histograms
 [X, Y] = meshgrid(pedgs, pedgs);
 
-%Number of observations from each platform - use this to decide how to
-%subsample
-nHealy = length(find(platform == 1));
-nProfile = length(find(platform == 2));
-nWaveglider = length(find(platform == 3));
-
-%Subset the Healy data
-healyInc = round(nHealy / nProfile);
-healySubsample = zeros(size(lons));
-healySubsample(1:healyInc:nHealy) = 1; healySubsample(nHealy:end) = 1;
-
-%Subset the Wave Glider data
-wavegliderInc = 5;
-wavegliderSubsample = zeros(size(lons));
-wavegliderSubsample(1:(length(lons) - nWaveglider)) = 1; wavegliderSubsample((length(lons) - nWaveglider):wavegliderInc:end) = 1;
-
 %Make a mask identifying which observations to use in the comparison
 toPlotMask = zeros(size(lons));
-toPlotMask(inTimeMask == 1 & healySubsample == 1 & wavegliderSubsample == 1) = 1;
+toPlotMask(inTimeMask == 1) = 1;
 
 %Make the 2d histogram comparing the in situ observations and MODIS SST
 binCounts = hist3([temps(toPlotMask == 1), modisSST_nearObservations(toPlotMask == 1)], 'edges', {pedgs pedgs});
@@ -67,7 +50,8 @@ figure(4); set(gcf, 'color', 'w', 'pos', [176 534 944 414]) %Figure 4 - same as 
 subplot(1, 2, 1)
 g = pcolor(X, Y, binCounts); set(g, 'linestyle', 'none')
 hold on
-colormap(gca, brewermap(20, 'greys'))
+cm = brewermap(13, 'greys'); cm = cm(3:end-1, :);
+colormap(gca, cm)
 
 %Linear regression 
 mdl = fitlm(temps(toPlotMask == 1), modisSST_nearObservations(toPlotMask == 1));
@@ -81,14 +65,17 @@ xlim(limits); ylim(limits);
 x = limits(1):.1:limits(2);
 y = x; plot(x, y, 'color', 0.7 .* [1 1 1], 'LineStyle', '-') %Plot 1:1 line
 grid on
-cb = colorbar;
-ylabel(cb, 'Number of observations', 'fontsize', 14)
+% cb = colorbar;
+% ylabel(cb, 'Number of observations', 'fontsize', 14)
 pbaspect([1 1 1])
-ylabel(['MODIS sea surface temperature (', sprintf(char(176)), 'C)'], 'fontsize', 14)
-xlabel(['Observed sea surface temperature (', sprintf(char(176)), 'C)'], 'fontsize', 14)
+ylabel(['MODIS sea surface temperature (', sprintf(char(176)), 'C)'], 'fontsize', 16)
+xlabel(['Observed conservative temperature (', sprintf(char(176)), 'C)'], 'fontsize', 16)
 delete(legend) %This came with the plot(mdl) command
 title('') %This also came with the plot(mdl) command
-set(gca, 'fontsize', 12)
+set(gca, 'fontsize', 14)
+caxis([0, 50])
+text(0.025,0.95,'a','Units','normalized','color', 'k', 'FontSize',16, 'fontweight', 'bold')
+
 
 %% Make platform specific comparisons, if there are some observations in the time period
 if plotPlatformComparison
@@ -180,3 +167,5 @@ if plotPlatformComparison
     end
 
 end
+
+clearvars -except rootPath ibcao AMSR2 profiles wvdata metData

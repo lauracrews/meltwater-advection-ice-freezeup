@@ -12,7 +12,7 @@ saveDir = [rootPath, 'figures/fig7/'];
 
 % Convert geostrophic velocities (calculated in plot_DOT_geostrophic.m) to column vectors 
 ug = ug(:); vg = vg(:);
-
+%%
 makeAnimation = false; 
 [~, colors] = defineSODAconstants;
 rhoWater = 1026; %Reference density of Seawatere kg/m^3
@@ -58,6 +58,25 @@ metss = double(ncread(filename, 'metss', [startLon startLat startInd],...
 mntss = double(ncread(filename, 'mntss', [startLon startLat startInd],...
     [endLon - startLon + 1,  endLat - startLat + 1, endInd - startInd + 1]));
 
+%% Filter the surface stress data to retain frequencies of at least 1 day
+dt_f = mean(diff(eraTime)) * 24; %Sampling interval (hours). Need to distinguish from dt, which is the timesep in seconds for the model trajectories
+Fs = 1/dt_f; %Sampling frequency
+fc = 1/16; %Cutoff frequency, 1/Hours
+Wn = fc/(Fs/2);
+ord = 5; %Define filter order
+[b,a] = butter(ord, Wn);
+
+mntss_f = nan(size(mntss));
+metss_f = mntss_f;
+[I, J, K] = size(metss);
+for i = 1:I  
+    for j = 1:J
+        metss_f(i, j, :) = filtfilt(b, a, squeeze(metss(i, j, :)));
+        mntss_f(i, j, :) = filtfilt(b, a, squeeze(mntss(i, j, :)));  
+    end
+end
+
+%%
 %Empty arrays to hold the tracking results
 
 %Trajectories for combined velocity
@@ -79,7 +98,7 @@ allve = nan.*ones(length(trajTimesteps), size(startPos, 1));
 %Surface stresses
 alltaux = nan.*ones(length(trajTimesteps), size(startPos, 1));
 alltauy = nan.*ones(length(trajTimesteps), size(startPos, 1));
-
+%%
 for startNum = 1:size(startPos, 1) %Create multiple trajectories - one for each start position
     disp(['Calculating simulated trajectory ', num2str(startNum), ' of ', num2str(size(startPos, 1))])
     
@@ -108,9 +127,9 @@ for startNum = 1:size(startPos, 1) %Create multiple trajectories - one for each 
 
             if vel ~= 2 %No need to calculate Ekman velocity if advecting with only geostrophic velocity
 
-                %ERA5 surface stress dataa at the current time step in the whole region 
-                metss_cur = metss(:, :, curTime); metss_cur = metss_cur(:); 
-                mntss_cur = mntss(:, :, curTime); mntss_cur = mntss_cur(:); 
+                %ERA5 surface stress data at the current time step in the whole region 
+                metss_f_cur = squeeze(metss_f(:, :, curTime)); 
+                mntss_f_cur = squeeze(mntss_f(:, :, curTime)); 
 
                 %Identify the spatially-closest ERA5 data
                 dists  = nan .* ones(size(eraLon));
@@ -120,7 +139,7 @@ for startNum = 1:size(startPos, 1) %Create multiple trajectories - one for each 
                     end
                 end
                 [~, ind] = min(abs(dists(:))); clear dists
-                tau_airwater_x = metss_cur(ind); tau_airwater_y = mntss_cur(ind);
+                tau_airwater_x = metss_f_cur(ind); tau_airwater_y = mntss_f_cur(ind);
 
                 %Calculate average ocean velocity in the Ekman layer
                 ve_cur =  -(1/gsw_f(curLat)) * tau_airwater_x * (1/(rhoWater * D_ek));
@@ -172,7 +191,7 @@ for startNum = 1:size(startPos, 1) %Create multiple trajectories - one for each 
     %         q(3) = m_quiver(curLon, curLat, allue(curTime, :), allve(curTime, :), 0, 'r', 'linewidth', 1);
     % 
     %         h(3) = m_scatter(driftLons_e(:), driftLats_e(:), 12, 'k', 'filled');
-    %         title(datestr(driftTimes(curTime), 'mmm dd hh:MM'))
+    %         title(datestr(driftTimes(curTime), 'dd mmm hh:MM'))
     %         m_grid
     %         drawnow
     %         clf 
@@ -184,24 +203,25 @@ end
 % openfig('ModisTerraNSST_sept30toOct7_withIce.fig')
 % openfig('ModisTerraNSST_sept14to21_withIce_wavegliders.fig')
 openfig([rootPath, 'figures/fig7/DOT_geostrophic.fig'])
+% openfig('frontTracking_ekmanDepth15.fig')
 
-%% Plot trajectories, with colors changing at important times
+%Plot trajectories, with colors changing at important times
 days = [datenum('sept 26 2018'), datenum('oct 3 2018'), datenum('oct 11 2018'), endTime]; 
 prevInd = 1;
 clrs = [0 0 0; 0.3 0.3 0.3; 0.6 0.6 0.6; 0.9 0.9 0.9]; %Array of colors (grayscale) to plot the trajectories
 for day = 1:length(days)
     [~, ind] = min(abs(trajTimesteps - days(day)));
     lons = trajLons_tot(prevInd:ind, :); lats = trajLats_tot(prevInd:ind, :); %Choose which trajectory (Ekman, geostrophic, combined) by editing here
-    h(3) = m_scatter(lons(:), lats(:), 20, clrs(day, :), 'filled');
-%     m_text(lons(end, 1), lats(end, 1), ['   ', datestr(driftTimes(ind), 'mmm dd')], 'fontsize', 12)
-
+    h(3) = m_scatter(lons(:), lats(:), 10, clrs(day, :), 'filled');
+%     m_text(lons(end, 1), lats(end, 1), ['   ', datestr(driftTimes(ind), 'dd mmm')], 'fontsize', 12)
     prevInd = ind;
 end
 
 %Add trajectory start positions to the map
 m_scatter(startPos(:, 1), startPos(:, 2), 20, 'w', 'filled');
-m_text(startPos(1, 1), startPos(1, 2), ['  ', datestr(startTime(1), 'mmm dd')], 'fontsize', 12, 'color', 'w')
+m_text(startPos(1, 1), startPos(1, 2), ['  ', datestr(startTime(1), 'dd mmm')], 'fontsize', 12, 'color', 'w')
 
+ 
 %% Plot crossings of the 26 g/kg isohaline - code copied from plot_surfaceSalinity_byTime.m
 saltOutcrop = 26;
 
@@ -221,38 +241,53 @@ times_met =  metData.times(startInd:endInd);
 lats_met = metData.lats(startInd:endInd); lons_met = metData.lons(startInd:endInd); 
 
 ind = find(abs(metData.SAs(startInd:endInd) - saltOutcrop) == min(abs(metData.SAs(startInd:endInd) - saltOutcrop)));
-outcrop_ship = [lons_met(ind), lats_met(ind)]; 
-outcropTime_ship = times_met(ind);
+outcropPos(1, :) = [lons_met(ind), lats_met(ind)]; 
+outcropTime(1) = times_met(ind);
 
 %Add front location from ship to map
-m_scatter(outcrop_ship(1), outcrop_ship(2), 150, '^', 'w', 'filled')
-m_scatter(outcrop_ship(1), outcrop_ship(2), 100, clrs(2,:), '^', 'filled')
-m_text(outcrop_ship(1) + .2, outcrop_ship(2), ['  ', datestr(outcropTime_ship, 'mmm dd')], 'color', 'k', 'fontsize', 12)
+% m_scatter(outcropPos(1, 1), outcropPos(1, 2), 150, '^', 'w', 'filled')
+% m_scatter(outcropPos(1, 1), outcropPos(1, 2), 100, clrs(2,:), '^', 'filled')
+% m_text(outcropPos(1, 1) + .2, outcropPos(1, 2), ['  ', datestr(outcropTime(1), 'dd mmm')], 'color', 'w', 'fontsize', 12)
+  %%        
+for transect = 2:3
+    switch transect
+        case 2
+            %Identify front location on the Seaglider 199 crossing of the front
+            startTime = datenum('sept 30 2018'); endTime = datenum('oct 6 2018');  
+        case 3
+            startTime = datenum('oct 6 2018'); endTime = datenum('oct 11 2018') + .2; %Should match endTime in plot_surfaceSalinity_byTime transect 3
+    end
+    
+    profNums = find(strcmp(profiles.dataset, 'sg199') & profiles.times >= startTime & profiles.times <= endTime);
+    sg_lons = profiles.lons(profNums); sg_lats = profiles.lats(profNums);
+    times = profiles.times(profNums);
+    salts = nanmean(profiles.SA(1:5, profNums));
+        
+     %Identify 26 salinity outcrop = front location in Seaglider data
+    [~, indFront] = min(abs(salts - saltOutcrop));
 
-%Identify front location on the Seaglider 199 crossing of the front
-startTime = datenum('sept 30 2018'); endTime = datenum('oct 6 2018');
-profNums = find(strcmp(profiles.dataset, 'sg199') & profiles.times >= startTime & profiles.times <= endTime);
-sg_lons = profiles.lons(profNums); sg_lats = profiles.lats(profNums);
-times = profiles.times(profNums);
-salts = nanmean(profiles.SA(1:5, profNums));
+    if isempty(indFront) %This should not occur, though the isohaline barely outcrops on Transect 3
+        indFront = length(salts); %Defaults to the end of the transect
+    end
 
-indFront = find(abs(salts - saltOutcrop) == min(abs(salts - saltOutcrop)));
-outcrop_sg = [sg_lons(indFront), sg_lats(indFront)]; 
-m_scatter(outcrop_sg(1), outcrop_sg(2), 150, 'w', '^', 'filled')
-m_scatter(outcrop_sg(1), outcrop_sg(2), 100, clrs(3,:), '^', 'filled')
-m_text(outcrop_sg(1) + .2, outcrop_sg(2), ['  ', datestr(times(indFront), 'mmm dd')], 'color', 'k', 'fontsize', 12)
+    outcropPos(transect, :) = [sg_lons(indFront), sg_lats(indFront)]; 
+    outcropTime(transect) = times(indFront);
 
-%Plot the end of the Seaglider 199 transect through meltwater
-startTime = datenum('oct 6 2018'); endTime = datenum('oct 11 2018');
-profNums = find(strcmp(profiles.dataset, 'sg199') & profiles.times >= startTime & profiles.times <= endTime);
-sg_lons = profiles.lons(profNums); sg_lats = profiles.lats(profNums);
-times = profiles.times(profNums);
-m_scatter(sg_lons(end), sg_lats(end), 150, 'w', '^', 'filled')
-m_scatter(sg_lons(end), sg_lats(end), 100, clrs(4,:), '^', 'filled')
-m_text(-148.3, 74.3, datestr(times(end), 'mmm dd'), 'color', 'k', 'fontsize', 12)
-transectEnd_sg = [sg_lons(end), sg_lats(end)];
-transectEndTime = times(end); 
+end
 
+m_line([startPos(4, 1), outcropPos(1, 1)], [startPos(4, 2), outcropPos(1, 2)], 'linewidth', 4, 'linestyle', ':', 'color', clrs(1, :))
+m_line(outcropPos(1:2, 1), outcropPos(1:2, 2), 'linewidth', 4, 'linestyle', ':', 'color', clrs(2, :))
+m_line(outcropPos(2:3, 1), outcropPos(2:3, 2), 'linewidth', 4, 'linestyle', ':', 'color', clrs(3, :))
+
+for i = 1:3
+    m_scatter(outcropPos(i, 1), outcropPos(i, 2), 150, 'w', '^', 'filled')
+    m_scatter(outcropPos(i, 1), outcropPos(i, 2), 100, clrs(i+1,:), '^', 'filled')
+    m_text(outcropPos(i, 1) + .2, outcropPos(i, 2), ['  ', datestr(outcropTime(i), 'dd mmm')], 'color', 'w', 'fontsize', 12)
+end
+
+transectEndTime = times(end);
+
+%%
 %Save map figure with simulated trajectories
 saveName = 'frontTracking';
 if saveFigs
@@ -263,17 +298,19 @@ end
 
 %% Average wind and Ekman velocity in a box, for plotting vector timeseries
 
-%Region in which to aaaverage velocities
+%Region in which to average velocities
 pt1 = [-149, 73]; pt2 = [-145, 73]; pt3 = [-145, 74.5]; pt4 = [-149, 74.5]; 
+% pt1 = [-147, 74.5]; pt2 = [-145, 74.5]; pt3 = [-145, 75.5]; pt4 = [-147, 75.5]; 
+
 pts = [pt1(1), pt2(1), pt3(1), pt4(1); pt1(2), pt2(2), pt3(2), pt4(2)];
 
 %Plot box of area used for averaging wind - need to select map figure
-figure(1)
+% figure(1); subplot(6, 1, 1:4, ax2)
 [in, on] = inpolygon(eraLon, eraLat, pts(1, :), pts(2, :));
-m_contour(eraLon, eraLat, double(in), [0, 1], 'color', 'k', 'linewidth', 2, 'linestyle', '--')
+% m_contour(eraLon, eraLat, double(in), [0, 1], 'color', 'k', 'linewidth', 2, 'linestyle', '--')
 
 startTime = datenum('sept 21, 2018');
-endTime = datenum('oct 15 2018')-.125; %stop on the last timestep of the previous day
+endTime = datenum('oct 13 2018')-.125; %('oct 15 2018')-.125; %stop on the last timestep of the previous day
 
 %Wind and surface stress from ERA5
 atmFluxes = makeERA5timeseries(pts, startTime, endTime, {'u10', 'v10', 'metss', 'mntss'});
@@ -281,19 +318,32 @@ tau_airwater_x = [atmFluxes.metss]'; tau_airwater_y = [atmFluxes.mntss]';
 times = [(atmFluxes.time)]';
 windSpeeds = sqrt([atmFluxes.u10].^2 + [atmFluxes.u10].^2);
 
+dt = diff([atmFluxes(1:2).time]) * 24; %Sampling interval (hours)
+Fs = 1/dt; %Sampling frequency
+fc = 1/24; %Cutoff frequency, 1/Hours
+Wn = fc/(Fs/2);
+ord = 5;
+[b,a] = butter(ord, Wn);
+
+u10low = filtfilt(b, a, [atmFluxes.u10]);
+v10low = filtfilt(b, a, [atmFluxes.v10]);
+tau_airwater_x = filtfilt(b, a, tau_airwater_x);
+tau_airwater_y = filtfilt(b, a, tau_airwater_y);
+
 %Calculate Ekman velocitties
 v_ek = -(1/gsw_f(mean(pts(2, :)))) * tau_airwater_x * (1/(rhoWater * D_ek));
 u_ek = (1/gsw_f(mean(pts(2, :)))) * tau_airwater_y * (1/(rhoWater * D_ek));
 
 % Plot wind and Ekman drift vectors
-figure; set(gcf, 'color', 'w', 'pos', [48 92 1492 863])
-subplot(3, 1, 1); hold on
-pt1 = quiver(times, zeros(size(times)), [atmFluxes.u10]' ./ 10, [atmFluxes.v10]' ./ 10, 0, 'linewidth', 1, 'color', colors.blue);
+% figure; set(gcf, 'color', 'w', 'pos', [48 92 1492 863])
+subplot(6, 1, 5:6); hold on
+% subplot(3, 1, 1); hold on
+pt1 = quiver(times, zeros(size(times)), u10low' ./ 10, v10low' ./ 10, 0, 'linewidth', 1, 'color', colors.blue, 'ShowArrowHead', 'off');
 set(pt1, 'autoscale', 'off'); axis equal 
 pt2 = quiver(datenum('Oct 1 2018'), -0.7, 10 ./ 10, 0 ./ 10, 0, 'linewidth', 1, 'color', colors.blue);
 set(pt2, 'autoscale', 'off'); axis equal
 text(datenum('Oct 1 2018'), -0.5, '10-m wind, 10 m/sec', 'fontsize', 12, 'color', colors.blue);
-pt3 = quiver(times, zeros(size(times)), u_ek .* 10, v_ek .* 10, 0, 'linewidth', 1, 'color', colors.orange); 
+pt3 = quiver(times, zeros(size(times)), u_ek .* 10, v_ek .* 10, 0, 'linewidth', 1, 'color', colors.orange, 'ShowArrowHead', 'off'); 
 set(pt3, 'autoscale', 'off'); axis equal 
 pt4 = quiver(datenum('Oct 4 2018'), -0.7, 1, 0, 0, 'linewidth', 1, 'color', colors.orange);
 set(pt2, 'autoscale', 'off'); axis equal 
@@ -301,20 +351,34 @@ text(datenum('Oct 4 2018'), -0.5, 'Mean Ekman velocity, 10 cm/sec', 'fontsize', 
 
 xlim([min(times) - .5, max(times) + .5])
 ylim([-2, 2])
-set(gca, 'ytick', '', 'fontsize', 12)
 grid on; box on
-datetick('x', 'mm/dd', 'keeplimits')
+set(gca, 'ytick', '', 'xtick', startTime:1:ceil(endTime), 'fontsize', 12, 'XTickLabelRotation', 90)
+datetick('x', 'mmm dd', 'keeplimits', 'keepticks')
 
+%Make a compass rose in the upper left corner of plot
+line(datenum('sep 21 2018') + [.1, 0.9], 1.3 .* [1 1], 'color', 'k', 'linewidth', 1)
+line(datenum('sep 21 2018') + [.5, .5], [.95 1.65], 'color', 'k', 'linewidth', 1)
+text(datenum('sep 21 2018') + .4, 1.82, 'N')
+text(datenum('sep 21 2018') + .4, .78, 'S')
+text(datenum('sep 21 2018') - .22, 1.3, 'W')
+text(datenum('sep 21 2018') + .93, 1.3, 'E')
+%%
 %Additional plots showing one component direction wind and Ekman velocities 
+figure; set(gcf, 'color', 'w', 'pos', [48 92 1492 863])
+
 subplot(3, 1, 2)
 yyaxis left; hold on
 plot(times, [atmFluxes.u10]')
+plot(times, u10low')
+
 yyaxis right
 plot(times, -v_ek)%, 'color', 'r')
 
 subplot(3, 1, 3)
 yyaxis left; hold on
 plot(times, [atmFluxes.v10]')
+plot(times, v10low')
+
 yyaxis right; hold on
 plot(times, u_ek)%, 'color', 'r')
 
@@ -417,7 +481,7 @@ if makeAnimation
         set(h(4), 'facealpha', .9)
         cmocean('ice'); caxis([0, 1])
         hold on
-        title(datestr(trajTimesteps(curTime), 'mmm dd hh:MM'))
+        title(datestr(trajTimesteps(curTime), 'dd mmm hh:MM'))
         
         %Add trajectories up to this time 
         curLons = trajLons_toPlot(1:curTime, :); curLats = trajLats_toPlot(1:curTime, :);
@@ -438,19 +502,19 @@ if makeAnimation
                 %Add front location from ship to map
             h(5) = m_scatter(outcrop_ship(1), outcrop_ship(2), 150, '^', 'w', 'filled');
             h(6) = m_scatter(outcrop_ship(1), outcrop_ship(2), 100, clrs(2,:), '^', 'filled');
-            h(7) = m_text(outcrop_ship(1) + 1, outcrop_ship(2), ['  Healy, ', datestr(outcropTime_ship, 'mmm dd')], 'color', 'k', 'fontsize', 12);
+            h(7) = m_text(outcrop_ship(1) + 1, outcrop_ship(2), ['  Healy, ', datestr(outcropTime_ship, 'dd mmm')], 'color', 'k', 'fontsize', 12);
         end
         
         if trajTimesteps(curTime) >= outcropTime_sg
             h(9) = m_scatter(outcrop_sg(1), outcrop_sg(2), 150, 'w', '^', 'filled');
             h(10) = m_scatter(outcrop_sg(1), outcrop_sg(2), 100, clrs(3,:), '^', 'filled');
-            h(11) = m_text(outcrop_sg(1) + 1, outcrop_sg(2), ['  SG199, ', datestr(outcropTime_sg, 'mmm dd')], 'color', 'k', 'fontsize', 12);
+            h(11) = m_text(outcrop_sg(1) + 1, outcrop_sg(2), ['  SG199, ', datestr(outcropTime_sg, 'dd mmm')], 'color', 'k', 'fontsize', 12);
         end
         
         if trajTimesteps(curTime) >= transectEndTime
             h(12) = m_scatter(sg_lons(end), sg_lats(end), 150, 'w', '^', 'filled');
             h(13) = m_scatter(sg_lons(end), sg_lats(end), 100, clrs(4,:), '^', 'filled');
-            h(14) = m_text(-146, 74.25, ['  End of SG199 transect', sprintf('\n'), '   through front, ', datestr(transectEndTime, 'mmm dd')], 'color', 'k', 'fontsize', 12);
+            h(14) = m_text(-146, 74.25, ['  End of SG199 transect', sprintf('\n'), '   through front, ', datestr(transectEndTime, 'dd mmm')], 'color', 'k', 'fontsize', 12);
         end
 
         F1 = getframe(gcf);

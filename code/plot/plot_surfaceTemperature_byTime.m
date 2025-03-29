@@ -1,12 +1,14 @@
 % Plot the surface ocean temperature measurements from Healy, Seagliders, uCTD
 % divided by time periods
-clearvars -except rootPath AMSR2 profiles wvdata metData
 close all
 
 saveFigs = true;
 saveDir = [rootPath, 'figures/fig2/'];
 saveName = 'SST_fourTimePeriods';
 
+fntsz = 16; %font size for entire figure. Nice to be able to update here - want big font for paper but smaller is better for presentations
+
+%These data already loaded in run_meltwaterAdvection.m
 %Load uCTD and Seaglider profiles
 %profiles = loadProfiles;
 
@@ -23,15 +25,20 @@ saveName = 'SST_fourTimePeriods';
 minlon = -150; maxlon = -143; minlat = 72; maxlat = 75.5;
 m_proj('lambert', 'lon', [minlon maxlon], 'lat', [minlat maxlat]);
 
+%Letters to label subplots
+alphabet = ('a':'z').';
+chars = num2cell(alphabet);
+chars = chars.';
+
 [moorings, ~] = defineSODAconstants;
 
-figure; set(gcf, 'color', 'w', 'pos', [144 227 1449 728]) %for 1x4 subplots
+figure; set(gcf, 'color', 'w', 'pos', [144 99 1371 856]) %[144 227 1449 728]) %for 1x4 subplots
 for splot = 1:4 %Iterate through the time periods
 
     switch splot
         case 1 
             startTime = datenum('sept 21 2018');
-            endTime = datenum('sept 30 2018');          
+            endTime = datenum('sept 30 2018')-0.001; %Because this really means sampling until midnight on Sept 29/Sept 30            
             iceDay = datenum('Sept 25 2018'); %Day on which to overlay AMSR2 Ice concentration
             clim_temp = [-1.5, 1];
             
@@ -39,8 +46,8 @@ for splot = 1:4 %Iterate through the time periods
             curFile = 'T20182572018264.L3m_8D_NSST_sst_4km.nc'; 
 %             curFile = 'T20182652018272.L3m_8D_NSST_sst_4km.nc'; 
         case 2
-            startTime = datenum('sept 30 2018');
-            endTime = datenum('oct 6 2018');          
+            startTime = datenum('sept 30 2018'); %Start sampling at midnight on Sept 29/Sept 30
+            endTime = datenum('oct 6 2018')-0.001;          
             iceDay = datenum('Oct 4 2018');
             clim_temp = [-1.5, 0.5];
             
@@ -48,7 +55,7 @@ for splot = 1:4 %Iterate through the time periods
             curFile = 'T20182732018280.L3m_8D_NSST_sst_4km.nc';          
         case 3
             startTime = datenum('oct 6 2018');
-            endTime = datenum('oct 11 2018');           
+            endTime = datenum('oct 11 2018')-0.001;%+.2;           
             iceDay = datenum('Oct 8 2018');
             clim_temp = [-1.5, 0];
         case 4
@@ -60,8 +67,8 @@ for splot = 1:4 %Iterate through the time periods
 %             shading flat
 %             colormap(ax1, gray)
 %             caxis([0.05 0.2])
-%             m_grid('fontsize', 12, 'linestyle', 'none')
-            startTime = datenum('oct 11 2018');
+%             m_grid('fontsize', fntsz, 'linestyle', 'none')
+            startTime = datenum('oct 11 2018');%+.2;
             endTime = datenum('oct 15 2018');            
             iceDay = datenum('Oct 12 2018');
             clim_temp = [-1.5, -0.25];
@@ -75,7 +82,17 @@ for splot = 1:4 %Iterate through the time periods
         return
     end
     
-    ax1 = axes; subplot(1, 4, splot, ax1)  
+    %Find ice concentration on the iceDay (a representative day to plot)
+    [~, curIceInd] = min(abs(AMSR2.mattime - iceDay));
+    curIce = squeeze(AMSR2.SIC(:, :, curIceInd));
+    curIce(curIce <= 0) = nan;
+
+    if splot == 4 %want the ice under the temperature measurements
+        ax2 = axes; subplot(2, 4, splot, ax2); hold on  
+        h2 = m_pcolor(AMSR2.lon, AMSR2.lat, curIce);
+    end
+    
+    ax1 = axes; subplot(2, 4, splot, ax1)  
     modisTitle = ''; 
     if splot == 1 || splot == 2 %Plot the MODIS image
         [modisLon, modisLat, sst, ~, ~, modisTitle] = loadMODISsst(curFile, minlon, maxlon, minlat, maxlat);
@@ -101,34 +118,47 @@ for splot = 1:4 %Iterate through the time periods
        
     %Scatter Seaglider and uCTD observations in upper five meters
     profNums = identifyProfileNumbers(profiles, minlon, minlat, maxlon, maxlat, startTime, endTime);
+    
+    if splot == 4
+        inds = find(strcmp(profiles.dataset(profNums), 'uCTD') & (profiles.lons(profNums) < -146.9));
+        m_line([min(profiles.lons(profNums(inds))), max(profiles.lons(profNums(inds)))], ...
+            [min(profiles.lats(profNums(inds))), max(profiles.lats(profNums(inds)))], ...
+            'color', 'w', 'linewidth', 11)
+
+        %Add ship data again because some got covered by the line
+        m_scatter(metData.lons(healyStartInd:healyEndInd), metData.lats(healyStartInd:healyEndInd), 5, metData.CTs(healyStartInd:healyEndInd));
+    end
+    
     m_scatter(profiles.lons(profNums), profiles.lats(profNums), 60, nanmean(profiles.CT(1:5, profNums)), 'filled');
       
     cmocean('thermal'); caxis(clim_temp); %Set color axis
     ps = get(gca, 'pos');
     cb = colorbar('Ticks', [-1.5, -1, -0.5, 0, 0.5, 1]);
-    set(cb, 'fontsize', 12, 'location', 'southoutside')
-    ylabel(cb, ['Conservative temperature ', ' (', sprintf(char(176)), 'C)'], 'fontsize', 12)%
-    m_grid('xtick', [-149:2:-143], 'fontsize', 12)   
+    set(cb, 'fontsize', fntsz, 'location', 'southoutside')
+    ylabel(cb, ['Conservative temperature ', ' (', sprintf(char(176)), 'C)'], 'fontsize', fntsz)%
+    m_grid('xtick', [-149:2:-143], 'fontsize', fntsz)   
 
     % Add another axes for the ice concentration. New axis is necessary to allow different colormap
-    ax2 = axes; subplot(1, 4, splot, ax2); hold on  
-    [~, curIceInd] = min(abs(AMSR2.mattime - iceDay));
-    curIce = nanmean(AMSR2.SIC(:, :, curIceInd), 3);
-    curIce(curIce <= 0) = nan;
-    h2 = m_pcolor(AMSR2.lon, AMSR2.lat, curIce);
-    set(h2, 'facealpha', .8)
+    if splot ~= 4
+        ax2 = axes; 
+        subplot(2, 4, splot, ax2); hold on  
+        h2 = m_pcolor(AMSR2.lon, AMSR2.lat, curIce);
+    else
+        subplot(2, 4, splot, ax2); 
+    end    
+%     set(h2, 'facealpha', .8)
     cmocean('ice')
     m_grid('xticklabels', [], 'yticklabels', [], 'linestyle', 'none')
-    cb2 = colorbar;
-    cbps = get(cb, 'pos'); cbps(2) = cbps(2) - 0.13;
-    set(cb2, 'fontsize', 12, 'location', 'southoutside')
-    set(cb2, 'position', cbps)
-    ylabel(cb2, [' AMSR2 sea ice concentration'], 'fontsize', 12)%  
     
-    %Make both axes the same size
-    set(ax2, 'pos', ps)
-    set(ax1, 'pos', ps)
-
+    if splot == 4       
+        cb2 = colorbar;
+    %     cbps = get(cb, 'pos'); cbps(2) = cbps(2) - 0.13;
+%         set(cb2, 'fontsize', fntsz, 'location', 'southoutside')
+        set(cb2, 'fontsize', fntsz, 'location', 'eastoutside')
+        set(cb2, 'position', [0.9054    0.5604    0.0138    0.2071])
+        ylabel(cb2, [' AMSR2 sea ice', newline, 'concentration'], 'fontsize', fntsz)%
+    end
+ 
     if splot == 1
         %Outline box for zoom in in meltwater area
         minlon_box = -149; maxlon_box = -146.5; minlat_box = 72.5; maxlat_box = 73.2;
@@ -144,10 +174,15 @@ for splot = 1:4 %Iterate through the time periods
 
     m_gshhs_i('patch',0.6*[1 1 1]); %Draw coastline
 
-    obsTitle = ['Observations ' datestr(startTime, 'mmm dd'), ' to ', datestr(endTime, 'mmm dd')];
-    iceTitle = ['AMSR2 sea ice ' datestr(iceDay, 'mmm dd')];
+    obsTitle = ['Observations ' datestr(startTime, 'dd mmm'), ' to ', datestr(endTime, 'dd mmm')];
+    iceTitle = ['AMSR2 sea ice ' datestr(iceDay, 'dd mmm')];
     
-    title([modisTitle, sprintf('\n'), obsTitle, sprintf('\n'), iceTitle], 'fontsize',14, 'fontweight', 'bold') 
+    %Make both axes the same size
+    set(ax2, 'pos', ps)
+    set(ax1, 'pos', ps)
+    
+    title([modisTitle, sprintf('\n'), obsTitle, sprintf('\n'), iceTitle], 'fontsize',fntsz, 'fontweight', 'bold') 
+    text(0.125,0.95,chars{splot},'Units','normalized','FontSize',fntsz+2, 'fontweight', 'bold')
 end
 
 if saveFigs 
@@ -155,3 +190,5 @@ if saveFigs
     print([saveDir, saveName],'-dpng')
     saveas(gcf, [saveDir, saveName, '.fig'])
 end
+
+clearvars -except rootPath ibcao AMSR2 profiles wvdata metData 

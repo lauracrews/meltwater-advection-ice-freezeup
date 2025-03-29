@@ -3,10 +3,9 @@
 %in situ observations taken at the time of those images. Options to plot data from all 
 %platforms on one figure or to make separate panels for Healy underway data, 
 %Seaglider and uCTD data, and Wave Glider data. 
-clearvars -except rootPath AMSR2 profiles wvdata metData
 plotPlatformComparison = false;
 
-saveFigs = true;
+saveFigs = false;
 saveDir = [rootPath, 'figures/fig3/'];
 saveName = 'satellite_inSitu_comparison';
 
@@ -16,7 +15,6 @@ startTime = datenum('sept 19 2018')+.3;
 endTime = datenum('oct 15 2018')-.4;
     
 timeThreshold = 0; %Number of days within which the SMOS observation must be to the observation
-defineSODAconstants
 
 %Load underway data from the Healy system 
 % metData = load_correct_underwayData;
@@ -43,7 +41,7 @@ profNums = find(inTimeMask == 1 & profiles.qualFlag == 1);
 %Add Seaglider and uCTD data to the arrays holding data from all platforms
 lons = [lons; profiles.lons(profNums)]; lats = [lats; profiles.lats(profNums)]; 
 times = [times; profiles.times(profNums)];
-SAs = [SAs; nanmean(profiles.SA(1:3, profNums))']; salts = [salts; nanmean(profiles.salts(1:3, profNums))'];
+SAs = [SAs; nanmean(profiles.SA(1:2, profNums))']; salts = [salts; nanmean(profiles.salts(1:2, profNums))'];
 platform = [platform; 2 .* ones(size(profiles.lons(profNums)))];
 
 %Wave Glider data
@@ -52,15 +50,16 @@ platform = [platform; 2 .* ones(size(profiles.lons(profNums)))];
 CT = gsw_CT_from_t(SA, wvdata.temps(:,  3), gsw_p_from_z(-wvdata.depths(:,  3), wvdata.lats));
 
 %Add Wave Glider data to the arrays holding data from all platforms
-lons = [lons; wvdata.lons]; lats = [lats; wvdata.lats];
-times = [times; wvdata.times];
-salts = [salts; wvdata.salts(:, 2)]; %At surface
-SAs = [SAs; SA]; %at 9 m so not used
-platform = [platform; 3 .* ones(size(wvdata.lons))];
+wavegliderInc = 5;
+lons = [lons; wvdata.lons(1:wavegliderInc:end)]; lats = [lats; wvdata.lats(1:wavegliderInc:end)];
+times = [times; wvdata.times(1:wavegliderInc:end)];
+salts = [salts; wvdata.salts((1:wavegliderInc:end), 2)]; %At surface
+SAs = [SAs; SA(1:wavegliderInc:end)]; %at 9 m so not used
+platform = [platform; 3 .* ones(size(wvdata.lons(1:wavegliderInc:end)))];
 
 %Load SMOS images
 files = dir([rootPath, 'data/SMOS_SSS/*7days.nc']);
-if isempty(files_daily)
+if isempty(files)
      disp(['SMOS sea surface salinity data not found. Download weekly daily files for 15 September 2018, 21 September 2018, 30 September 2018, and 7 October 2018 from', ...
             newline, 'https://www.seanoe.org/data/00607/71909/', ...
             newline, 'to the directory ~/meltwaterAdvection/data/SMOS_SSS/'])        
@@ -123,28 +122,12 @@ pedgs = 23:0.2:30;
 
 %% Data from all platforms on one plot
 
-%Number of observations from each platform - use this to decide how to
-%subsample
-nHealy = length(find(platform == 1));
-nProfile = length(find(platform == 2));
-nWaveglider = length(find(platform == 3));
-
-%Subset the Healy data
-healyInc = round(nHealy / nProfile);
-healySubsample = zeros(size(lons));
-healySubsample(1:healyInc:nHealy) = 1; healySubsample(nHealy:end) = 1;
-
-%Subset the Wave Glider data
-wavegliderInc = 5;
-wavegliderSubsample = zeros(size(lons));
-wavegliderSubsample(1:(length(lons) - nWaveglider)) = 1; wavegliderSubsample((length(lons) - nWaveglider):wavegliderInc:end) = 1;
-
 %Make a mask identifying which observations to use in the comparison
 toPlotMask = zeros(size(lons));
-toPlotMask(inTimeMask == 1 & healySubsample == 1 & wavegliderSubsample == 1) = 1;
+toPlotMask(inTimeMask == 1) = 1;% 
 
 %Standard deviation of the differences - discussed in text of the paper 
-nanstd(salts(toPlotMask == 1) - smosSSS_nearObservations(toPlotMask == 1));
+nanstd(salts(toPlotMask == 1) - smosSSS_nearObservations(toPlotMask == 1))
 
 %Make the 2d histogram comparing the in situ observations and SMOS SSS 
 binCounts = hist3([salts(toPlotMask == 1), smosSSS_nearObservations(toPlotMask == 1)], 'edges', {pedgs pedgs});
@@ -156,18 +139,25 @@ figure(4), set(gcf, 'color', 'w')
 subplot(1, 2, 2)
 g = pcolor(X, Y, binCounts); set(g, 'linestyle', 'none')
 hold on
-colormap(gca, brewermap(20, 'greys'))
+
+cm = brewermap(13, 'greys'); cm = cm(3:end-1, :);
+colormap(gca, cm)
 % title('Data from all platforms', 'fontsize', 12)
 xlim(limits); ylim(limits);
 x = limits(1):.1:limits(2);
 y = x; plot(x, y, 'color', 0.7 .* [1 1 1], 'LineStyle', '-')
 grid on; box on
-cb = colorbar;
-ylabel(cb, 'Number of observations', 'fontsize', 14)
 pbaspect([1 1 1])
-ylabel('SMOS sea surface salinity (psu)', 'fontsize', 14)
-xlabel('Observed sea surface salinity (psu)', 'fontsize', 14)
-set(gca, 'fontsize', 12)
+ps = get(gca, 'pos');
+cb = colorbar;
+ylabel(cb, 'Number of observations', 'fontsize', 16)
+ylabel('SMOS sea surface salinity (psu)', 'fontsize', 16)
+xlabel('Observed sea surface salinity (psu)', 'fontsize', 16)
+set(gca, 'fontsize', 14)
+caxis([0, 50])
+set(gca, 'pos', ps)
+text(0.025,0.95, 'b','Units','normalized','color', 'k', 'FontSize',16, 'fontweight', 'bold')
+
 
 if saveFigs
     if ~exist(saveDir, 'dir'); mkdir(saveDir); end
@@ -220,8 +210,10 @@ if plotPlatformComparison
         cb = colorbar;
         ylabel(cb, 'Number of observations', 'fontsize', 12)
         pbaspect([1 1 1])
-        ylabel('SMOS SSS', 'fontsize', 12)
-        xlabel('Observed SSS', 'fontsize', 12)
+        ylabel('SMOS sea surface salinity (psu)', 'fontsize', 12)
+        xlabel('Observed sea surface salinity (psu)', 'fontsize', 12)
         delete(legend)
     end
 end
+
+clearvars -except rootPath AMSR2 profiles wvdata metData

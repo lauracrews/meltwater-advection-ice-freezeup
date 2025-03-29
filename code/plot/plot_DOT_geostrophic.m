@@ -162,10 +162,10 @@ end
 %Optionally update map projection to match other remote sensing figures
 maxlon = -142; m_proj('lambert', 'lon', [minlon maxlon], 'lat', [minlat maxlat]);
 
-figure; set(gcf, 'pos', [560   263   894   685], 'color', 'w')
+figure; set(gcf, 'color', 'w', 'pos', [377 46 1173 850])% [560   263   894   685])
 
 %This axis will show the DOT data
-ax1 = axes; 
+ax1 = axes; subplot(6, 1, 1:4, ax1)
 m_contourf(lon_sub, lat_sub, dot_sub, [-0.05:0.01:0.2], 'linestyle', 'none');
 hold on
 
@@ -190,14 +190,14 @@ ps = get(gca, 'pos');
 caxis([-0.05, 0.2])
 cmocean('speed')
 cb = colorbar;
-ylabel(cb, ['Dynamic ocean topography (m) collected', sprintf(char('\n')), 'from ', datestr(startDay, 'mmm dd'), ' to ', datestr(endDay, 'mmm dd yyyy')], 'fontsize', 12)
-set(cb, 'fontsize', 12, 'position', [0.8,0.55,0.03,0.35])
+ylabel(cb, ['Dynamic ocean topography (m)', newline, 'collected from ', datestr(startDay, 'dd mmm'), ' to ', datestr(endDay, 'dd mmm')], 'fontsize', 12)
+set(cb, 'fontsize', 12, 'position', [0.7190 0.6894 0.0244 0.2271]) %[0.8,0.55,0.03,0.35])
 m_grid('linestyle', 'none', 'fontsize', 12)
 
 %Add AMSR2 ice concentration on a selected day
-load AMSR2_2018.mat
+% load AMSR2_2018.mat
 iceDay = datenum('Oct 12 2018');    
-ax2 = axes; hold on
+ax2 = axes; subplot(6, 1, 1:4, ax2); hold on
 [~, curIceInd] = min(abs(AMSR2.mattime - iceDay));
 curIce = nanmean(AMSR2.SIC(:, :, curIceInd), 3);
 curIce(curIce <= 0) = nan;
@@ -206,8 +206,8 @@ h2 = m_pcolor(AMSR2.lon, AMSR2.lat, curIce);
 cmocean('ice')
 m_grid('Fontsize', 12)%('linestyle', 'none')  
 cb2 = colorbar;
-ylabel(cb2, [datestr(iceDay, 'mmm dd yyyy'), ' AMSR2 sea ice concentration'], 'fontsize', 12)%  
-set(cb2, 'fontsize', 12, 'position', [0.8 0.16 0.03 0.35])
+ylabel(cb2, [datestr(iceDay, 'dd mmm'), ' AMSR2 sea ice concentration'], 'fontsize', 12)%  
+set(cb2, 'fontsize', 12, 'position', [0.7190 0.4165 0.0244 0.2271]) %[0.8 0.16 0.03 0.35])
 
 %Make both axes the same size
 set(ax2, 'pos', ps)
