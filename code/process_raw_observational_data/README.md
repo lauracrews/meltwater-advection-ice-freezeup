@@ -17,7 +17,7 @@ The master script for data processsing is `process_observational_data.m`. It cal
 `profilesInRegion_timeseries.m` - Makes a data structure of temperature and salinity profiles collected by all platforms (all Seagliders and uCTD) in a specified geographic region and date range. Calls `calculateHeatContent.m` to depth-integrate the heat in the temperature profiles. This is run once to identify all of the profiles used in the study, after which the data structure is saved and the relevant PWP model results are added later
 
 ## PWP modeling from observed profiles
-`initiate_run_pwp.m` - Prepares to run the PWP model. Averages ERA5 meteorological variables near each set of observed profiles used to initialize the model. Runs model. Saves PWP model output at each timestep for each observational profile, as well as adding key PWP results (i.e. profiles at freezing and freeze up time) to the `profiles.mat` data structure.
+`initiate_run_pwp.m` - Prepares to run the PWP model. Averages ERA5 meteorological variables near each set of observed profiles used to initialize the model. Runs model. Saves PWP model output at each timestep for each observational profile, as well as adding key PWP results (i.e. profiles at freezing and freeze up time) to the `profiles.mat` data structure. The resulting intermediate data product is `profiles_pwpresults_withFreshwater.mat', available in the ~/data/process_raw_observational_data/ directory of this repo
 
 `makeERA5timeseries.m` - Averages ERA5 data within the specified geographic coordinates. Input the names of the desired parameters as strings
 
