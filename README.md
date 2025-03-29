@@ -1,5 +1,5 @@
 # Meltwater advection hastens autumn freeze up
-This repo contains code to reproduce the analysis and figures in the paper "Meltwater advection hastens autumn freeze up" by Crews et al. (2022)
+This repo contains code to reproduce the analysis and figures in the paper "Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up" by Crews et al. (2022)
 
 Crews, L., Lee, C. M., Rainville, L., & Thomson, J. (2022). Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up. Journal of Geophysical Research: Oceans, 127, e2021JC017775. https://doi.org/10.1029/2021JC017775
 
