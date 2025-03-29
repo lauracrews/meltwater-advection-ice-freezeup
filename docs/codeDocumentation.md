@@ -1,5 +1,7 @@
+### Note: This documentation assumes observational data has been processed and PWP model has been run!
+These processed data products and model results are archived and publicly available. However, [this document](https://github.com/lauracrews/meltwater-advection-ice-freezeup/blob/main/code/process_raw_observational_data/README.md) describes the observational data processing steps, and the associated code is included in the `processs_raw_observational_data` directory of this repo. Please reference those resources to understand the processing steps required before the analysis and plotting described in the remainder of this document. 
+##
 ## Data extraction and processing
-
 #### Observational and PWP Model data
 `extract_dataFromArchive` - Opens the the Seaglider, underway CTD, Wave Glider, and USCGC Healy underway data used in this study (download data from http://hdl.handle.net/1773/47135)
 
@@ -9,7 +11,6 @@
 `batchAMSR2.m` - from Samuel Brenner. Uses ftp to download daily sea ice concentration data from the University of Bremen archive 
 
 `readAMSR2.m` - from Samuel Brenner. Reads daily .hdf files of sea ice concentration into the Matlab data structure `AMSR2_2018.mat`
-##
 
 #### CryoSat-2 dynamic ocean topography
 `extract_DOT.m` - Reads CyroSat-2 .asc files into Matlab and extracts lat/lon and dynamic ocean topography (DOT) - some string manipulation required. Calculates time of each data point, which are referenced to the satellite's equator crossing. Saves `allDOT.mat` data structure combining all data and optionally saves .mat data structures corresponding to each individual .asc file
@@ -25,12 +26,12 @@
 `plot_first_and_last_day_open.m` - Makes Figure 1, maps of melt out and freeze up date. Adapted from code from Luc Rainville. Requires the `AMSR2_2018.mat` data structure, which was created by running `batchAMSR2.m` and `readAMSR2.m`. Uses the function `conv2P.m` from Luc Rainville
 
 #### Figure 2
-`plot_surfaceTemperature_byTime.m` - Plot the surface ocean temperature measurements from *Healy*, Seagliders, uCTD divided by time periods. Note: Upon retesting in Matlab 2023b, this now makes a opaque layer on the Matlab fig. In the Figure interface you can click on and delete the obscuring layer, showing the plotted satellite SST data underneath.
+`plot_surfaceTemperature_byTime.m` - Plot the surface ocean temperature measurements from *Healy*, Seagliders, uCTD, separated by time periods. Note: Upon retesting in Matlab 2023b, this now makes a opaque layer on the Matlab fig. In the Figure interface you can click on and delete the obscuring layer, showing the plotted satellite SST data underneath.
 
 `plot_surfaceSalinity_byTime.m` - Plot the surface salinity measurements from *Healy*, Seagliders, uCTD divided by time periods
 
 #### Figure 3
-`plot_observations_dailyMODIS.m` -  Uses the file `modisComparison.mat` output by `match_observations_modis.m` to compares in situ sea surface temperature to MODIS sea surface temperature averaged in a box surrounding the observation. Options to plot comparisons from all platforms on one figure or to make separate panels for the *Healy* underway data, Seaglider and uCTD data, and Wave Glider data.
+`plot_observations_dailyMODIS.m` -  Uses the file `modisComparison.mat` output by `match_observations_modis.m` to compare in situ sea surface temperature to MODIS sea surface temperature averaged in a box surrounding the observation. Options to plot comparisons from all platforms on one figure or to make separate panels for the *Healy* underway data, Seaglider and uCTD data, and Wave Glider data.
 
 `plot_observations_SMOSsalinity.m` - Makes plot of SMOS sea surface salinity along with sea surface salinity from in situ observations. Iterates through weekly SMOS images and finds in situ observations taken at the time of those images. Options to plot data from all platforms on one figure or to make separate panels for *Healy* underway data, Seaglider and uCTD data, and Wave Glider data. 
 
