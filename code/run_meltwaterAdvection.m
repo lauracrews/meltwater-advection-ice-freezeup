@@ -1,31 +1,48 @@
-%Reproduces the analysis and figures of "Meltwater advection hastens autumn
-%freeze up" by Crews et al. (2021). 
+% Reproduces the analysis and figures of "Direct observations of the role
+% of lateral advection of sea ice meltwater in the onset of autumn freeze
+% up" by Crews et al. (2022).
 
-%All scripts by Laura Crews (lcrews@uw.edu) unless otherwise noted 
-%July 2021.
+% All scripts by Laura Crews (lcrews@uw.edu) unless otherwise noted 
+% July 2021.
 
-%To get started, download the required data to the appropriate directories. 
-%Instructions are provided in the "download data" section of https://github.com/lauracrews/meltwaterAdvection
+% To get started, download the required data to the appropriate directories. 
+% Instructions are provided in the "download data" section of 
+% https://github.com/lauracrews/meltwaterAdvection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear; close all
 
 rootPath = [userpath, '/meltwaterAdvection/'];
+saveFigs = true;
 
-%Open the the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
-%underway data used in this study (download from http://hdl.handle.net/1773/47135)
+% If running observational data processing and pwp modeling:
+% process_observational_data
+
+% If data processing is complete (i.e., using archived data)
+% Open the the Seaglider, underway CTD, Wave Glider, and USCGC Healy 
+% underway data used in this study (download data from http://hdl.handle.net/1773/47135)
 disp('Reading observational data into Matlab')
-[metData, wvdata, profiles] = extract_dataFromArchive;
+[metData, wvdata, profiles] = extract_dataFromArchive(rootPath);
+
+%%
 
 if ~exist([rootPath, 'data/AMSR2_2018.mat'], 'file')
     disp('Downloading and extracting AMSR2 sea ice concentration')
-    batchAMSR2; %Download AMSR2 sea ice concentration from University of Bremen
-    readAMSR2; %Create and load .mat file from AMSR2 data
+    batchAMSR2_1819(rootPath); %Download AMSR2 sea ice concentration from University of Bremen
+    AMSR2 = readAMSR2; %Create and load .mat file from AMSR2 data
+else 
+    load AMSR2_2018.mat %Mat file has already been prepared. Just reload it
 end
-load AMSR2_2018.mat
+
 
 %Begin making figures
 if ~exist([rootPath, 'figures/'], 'dir')
     mkdir([rootPath, 'figures/'])
 end
+
+%Load bathymetry for figures
+load('ibcao.mat')
+
+%%
 
 disp('Making Figure 1 by running plot_first_and_last_day_open.m')
 plot_first_and_last_day_open; 
@@ -52,14 +69,16 @@ plot_observations_dailyMODIS
 disp('Making Figure 3b by running plot_observations_SMOSsalinity.m')
 plot_observations_SMOSsalinity
 
+%Note: need to run Figure 4 construction in this order to not have a bug
+%that distorts the multiple map axes
+disp('Making Figure 4e and 4f by running plot_averageProfiles.m')
+plot_averageProfiles
+
 disp('Making Figure 4a and 4d by running plot_remnantIceSAR.m')
 plot_remnantIceSAR
 
 disp('Making Figure 4b and 4c by running plot_frontCharacteristics.m')
 plot_frontCharacteristics
-
-disp('Making Figure 4e and 4f by running plot_averageProfiles.m')
-plot_averageProfiles
 
 disp('Making Figure 5 by running plot_section.m')
 for transect = 1:2
