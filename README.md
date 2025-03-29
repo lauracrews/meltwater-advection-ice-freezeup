@@ -3,9 +3,14 @@ This repo contains code to reproduce the analysis and figures in the paper "Dire
 
 Crews, L., Lee, C. M., Rainville, L., & Thomson, J. (2022). Direct observations of the role of lateral advection of sea ice meltwater in the onset of autumn freeze up. Journal of Geophysical Research: Oceans, 127, e2021JC017775. https://doi.org/10.1029/2021JC017775
 
+### Key Points
+* High spatial and temporal resolution observations by ship-based and autonomous instruments in the ice-free Beaufort Sea are presented
+* Modified meltwater advected about 100 km over several weeks, cooling and shoaling the mixed layer and hastening freeze up by several days
+* Meltwater advection caused nearly as much mixed layer heat loss as was caused by seasonally integrated heat loss to the atmosphere
+
+### Plain Language Summary
+In large parts of the Arctic Ocean, sea ice melts completely in summer and reforms in autumn in a process known as “freeze up.” The timing of freeze up may affect energy exchanges between the ocean and atmosphere, such as occur during storms, as well as impact the sea ice ecosystem. Warming ocean temperatures mean freeze up is occurring later, lengthening the season in which vessels that are not ice-rated can engage in operations like shipping, resource extraction, and supplying local communities with fuel and cargo. Accurate freeze up forecasting helps ensure these operations are conducted safely. This study uses ocean temperature and salinity data from autonomous vehicles as well as data from satellites to demonstrate how areas that were affected by recent sea ice melt can freeze up early. We observed a cold and fresh footprint of meltwater near sea ice in the Beaufort Sea that flowed away from its original location and altered the upper ocean in neighboring areas. A simple model that simulates the atmosphere's influence on the ocean demonstrates that this meltwater caused the ocean to freeze several days earlier than it otherwise would have by cooling the upper ocean and limiting the depth of ocean mixing.
 ![ice_formation_melt](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/fig1/ice_formation_melt.png)
-### Abstract 
-In seasonally ice-free parts of the Arctic Ocean, autumn is characterized by heat loss from the upper ocean to the atmosphere and the onset of freeze up, in which first year sea ice begins to grow in open water areas. The timing of freeze up can be highly spatially variable, complicating efforts to provide accurate sea ice forecasting for marine operations. While melt season anomalies can be used to predict freeze up anomalies in some parts of the Arctic, this one-dimensional view merits further examination in light of recent work demonstrating the importance of three-dimensional flows in setting mixed layer properties in marginal ice zones. In this study we show that horizontal advection of sea ice meltwater hastens freeze up in areas distant from the ice edge. We use nearly 800 temperature and salinity profiles along with satellite imagery collected in the central Beaufort Sea in autumn 2018 to document the roughly 100 km advection of a cold and fresh surface meltwater layer over several weeks. This advected meltwater hastened freeze up by cooling and shoaling the mixed layer relative to adjacent areas unaffected by the meltwater. A mixed layer heat budget showed that advection was nearly as important as one-dimensional heat loss to the atmosphere for seasonally integrated mixed layer heat loss within the meltwater-affected area. 
 
 # Dependencies
 
@@ -28,10 +33,12 @@ Reproducing the analysis and figures requires the following steps:
 
 ## Download data
 From the University of Washington ResearchWorks archive at http://hdl.handle.net/1773/47135, download 
-* **Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data** to the directory ~/meltwaterAdvection/data/ 
-* **PWP model results** used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
+* Seaglider, underway CTD, Wave Glider, and USCGC *Healy* underway data to the directory ~/meltwaterAdvection/data/ 
+* PWP model results used to make the heat budget should be unzipped into the directory ~/meltwaterAdvection/data/PWPresults/ 
 
-Descriptions of these data are available in the [observational data documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/dataDocumentation.md). The processing routines for the raw observational data are described in the [observational data processing documentation](https://github.com/lauracrews/meltwater-advection-ice-freezeup/blob/main/code/process_raw_observational_data/README.md). **It is not necessary to rerun this code - instead, the processed data should be downloaded from the archive at [UW ResearchWorks](http://hdl.handle.net/1773/47135).** 
+Descriptions of these data are available in the [observational data documentation](https://github.com/lauracrews/meltwaterAdvection/blob/main/docs/dataDocumentation.md). The processing routines for the raw observational data and PWP model are described in the [observational data processing documentation](https://github.com/lauracrews/meltwater-advection-ice-freezeup/blob/main/code/process_raw_observational_data/README.md).
+
+**It is not necessary to rerun the observational data processing and PWP model code - instead, the processed data should be downloaded from the archive at [UW ResearchWorks](http://hdl.handle.net/1773/47135).** 
 
 ##
 **Sea ice concentration** from AMSR2 will be downloaded from the University of Bremen [archive](https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2018/)  by `batchAMSR2` within `run_meltwaterAdvection`  <br />
@@ -74,6 +81,8 @@ You will then receive an email to download several hundred zipped .asc files.
 **Alternatively, the DOT data used in the study are available on my github as [rawDOT.zip](https://github.com/lauracrews/meltwaterAdvection/raw/main/rawDOT.zip)**
 
 Unzip the files obtained by either method into the directory ~/meltwaterAdvection/data/DOT/raw/
+
+These data will be read into a file called `allDOT.mat` in the course of the analysis. A copy of my version of this file is in the data directory of this repo.  
 
 ## Run analysis and create figures
 
