@@ -29,4 +29,4 @@ end
 %Alternative method (which I think works)
 % deg = atan2d(v, u);
 % degN = 90 - deg; 
-% degN(degN < 0) = degN + 360;
+% degN(degN < 0) = degN(degN < 0) + 360;
